@@ -27,7 +27,7 @@ function schemaProfile(): string | undefined {
 
 /** Gateway-only: no Authorization; expects 200 when tenant schema exists. */
 export async function probeUnauthenticatedProfiles(): Promise<ProbeResult> {
-  const url = `${baseUrl()}/profiles?limit=0`;
+  const url = `${baseUrl()}/works?limit=0`;
   const res = await fetch(url, fluxFetchOptions() as RequestInit);
   const text = await res.text();
   const schemaHeader = res.headers.get("content-profile") ?? undefined;
@@ -48,7 +48,7 @@ export async function probeAuthenticatedBridge(sub = "foundry-flux-doctor-probe"
     return { ok: false, status: 0, detail: "FLUX_POSTGREST_SCHEMA is not set" };
   }
   const token = await mintFluxJwt(sub);
-  const url = `${baseUrl()}/profiles?limit=0`;
+  const url = `${baseUrl()}/works?limit=0`;
   const headers = new Headers({
     Authorization: `Bearer ${token}`,
     Accept: "application/json",
