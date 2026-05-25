@@ -94,6 +94,10 @@ pnpm agent:passage:import:odyssey-1-1
 # Iliad 1.1 (second MVP editorial proof)
 pnpm agent:passage:iliad-1-1
 pnpm agent:passage:import:iliad-1-1
+
+# Republic 327a (third MVP editorial proof)
+pnpm agent:passage:republic-327a
+pnpm agent:passage:import:republic-327a
 ```
 
 Or run the generic commands:

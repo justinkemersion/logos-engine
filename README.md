@@ -106,9 +106,11 @@ Push migrations through `0011_promotion_provenance.sql` for review actions and p
 | `pnpm agent:passage` | Run passage agent CLI (requires `CURSOR_API_KEY`) |
 | `pnpm agent:passage:odyssey-1-1` | Generate Odyssey 1.1 draft to `.local/agent-drafts/` |
 | `pnpm agent:passage:iliad-1-1` | Generate Iliad 1.1 draft to `.local/agent-drafts/` |
+| `pnpm agent:passage:republic-327a` | Generate Republic 327a draft to `.local/agent-drafts/` |
 | `pnpm agent:passage:import` | Import local draft JSON into `ai_runs` |
 | `pnpm agent:passage:import:odyssey-1-1` | Import Odyssey 1.1 draft for MVP passage |
 | `pnpm agent:passage:import:iliad-1-1` | Import Iliad 1.1 draft for MVP passage |
+| `pnpm agent:passage:import:republic-327a` | Import Republic 327a draft for MVP passage |
 | `pnpm flux:doctor` | Verify Flux gateway bridge |
 | `pnpm foundry:doctor` | Full app + env preflight |
 | `pnpm foundry:verify` | Lint, typecheck, test, drift, build |

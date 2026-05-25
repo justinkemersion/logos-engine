@@ -15,5 +15,11 @@ describe("agent-draft-path", () => {
         "/repo",
       ),
     ).toBe("/repo/.local/agent-drafts/odyssey/1-1.json");
+    expect(
+      defaultAgentDraftPath(
+        { workTitle: "Republic", citation: "327a" },
+        "/repo",
+      ),
+    ).toBe("/repo/.local/agent-drafts/republic/327a.json");
   });
 });

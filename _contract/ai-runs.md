@@ -77,10 +77,12 @@ Stable hand-curated shapes for tests live in `lib/agents/fixtures/`. Flux persis
 # Generate locally (requires CURSOR_API_KEY)
 pnpm agent:passage:odyssey-1-1
 pnpm agent:passage:iliad-1-1
+pnpm agent:passage:republic-327a
 
 # Import local JSON into ai_runs (requires FLUX_URL + FLUX_GATEWAY_JWT_SECRET)
 pnpm agent:passage:import:odyssey-1-1
 pnpm agent:passage:import:iliad-1-1
+pnpm agent:passage:import:republic-327a
 ```
 
 Use `pnpm agent:passage:import -- --passage-id=<uuid> --file=path.json` for other passages.
