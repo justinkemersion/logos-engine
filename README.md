@@ -88,9 +88,10 @@ stores drafts in `ai_runs` only — **not** in canonical translation tables.
 
 ```bash
 # Optional: set CURSOR_API_KEY in .env, then:
-pnpm agent:passage -- --work-title="Odyssey" --citation="1.1" \
-  --author="Homer" --greek="ἄνδρα μοι ἔννεπε, Μοῦσα, πολύτροπον" \
-  --out=draft.json
+pnpm agent:passage:odyssey-1-1
+
+# Import into ai_runs for Reading Desk review:
+pnpm agent:passage:import:odyssey-1-1
 ```
 
 Promotion selectively copies draft items into canonical tables (`translation_layers`,
@@ -103,6 +104,9 @@ Push migrations through `0011_promotion_provenance.sql` for review actions and p
 | Command | Purpose |
 |---------|---------|
 | `pnpm agent:passage` | Run passage agent CLI (requires `CURSOR_API_KEY`) |
+| `pnpm agent:passage:odyssey-1-1` | Generate Odyssey 1.1 draft to `.local/agent-drafts/` |
+| `pnpm agent:passage:import` | Import local draft JSON into `ai_runs` |
+| `pnpm agent:passage:import:odyssey-1-1` | Import Odyssey 1.1 draft for MVP passage |
 | `pnpm flux:doctor` | Verify Flux gateway bridge |
 | `pnpm foundry:doctor` | Full app + env preflight |
 | `pnpm foundry:verify` | Lint, typecheck, test, drift, build |

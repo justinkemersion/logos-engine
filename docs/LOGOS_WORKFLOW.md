@@ -85,10 +85,27 @@ agent output → ai_runs.passage_draft → promoted canonical draft → reviewed
 
 ```bash
 # Requires CURSOR_API_KEY in .env
+# Writes to .local/agent-drafts/odyssey/1-1.json by default (gitignored)
+pnpm agent:passage:odyssey-1-1
+
+# Import that file into ai_runs (requires FLUX_URL + FLUX_GATEWAY_JWT_SECRET)
+pnpm agent:passage:import:odyssey-1-1
+```
+
+Or run the generic commands:
+
+```bash
 pnpm agent:passage -- --work-title="Odyssey" --citation="1.1" \
   --author="Homer" --greek="ἄνδρα μοι ἔννεπε, Μοῦσα, πολύτροπον" \
-  --out=draft.json
+  --decompose
+
+pnpm agent:passage:import -- --passage-id=00000000-0000-0000-0002-000000000001 \
+  --work-title=Odyssey --citation=1.1 --decompose
 ```
+
+Use `--stdout` to print JSON instead of writing a file, or `--out=path.json` to override
+the default location. Live agent output lives under `.local/agent-drafts/{work}/{citation}.json`;
+hand-curated test fixtures remain in `lib/agents/fixtures/`.
 
 The Reading Desk **Generate Draft** button stays disabled until
 `LOGOS_PASSAGE_DRAFT_UI_ENABLED=1` after reviewing persisted drafts. The server action

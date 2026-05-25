@@ -1,22 +1,27 @@
 #!/usr/bin/env tsx
 /**
- * Run logos-passage-agent against a Greek passage and print validated JSON.
+ * Run logos-passage-agent against a Greek passage and write validated JSON.
  *
  * Usage:
  *   pnpm agent:passage -- --work-title="Odyssey" --citation="1.1" \
  *     --author="Homer" --greek="ἄνδρα μοι ἔννεπε, Μοῦσα, πολύτροπον"
  *
+ * By default writes to `.local/agent-drafts/{work}/{citation}.json` (gitignored).
+ *
  * Options:
  *   --decompose   Also print granular ai_runs payloads
- *   --out=path    Write draft JSON to file
+ *   --stdout      Print draft JSON to stdout instead of writing a file
+ *   --out=path    Override output path
  */
-import { writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
 import { loadEnvFiles } from "./lib/load-env";
+import { defaultAgentDraftPath } from "@/lib/agents/agent-draft-path";
 import { decomposePassageDraft } from "@/lib/agents/decompose-passage-draft";
 import {
   LogosPassageAgentValidationError,
   runLogosPassageAgent,
-} from "@/lib/agents/logos-passage-agent";
+} from "@/lib/agents/logos-passage-agent-core";
 import type { PassageInput } from "@/lib/agents/logos-passage-draft";
 
 loadEnvFiles();
@@ -34,7 +39,8 @@ function usage(): never {
       "Optional:",
       '  --author="Author"',
       "  --decompose",
-      "  --out=path.json",
+      "  --stdout          Print JSON to stdout (no file write)",
+      "  --out=path.json   Override default .local/agent-drafts/... path",
     ].join("\n"),
   );
   process.exit(2);
@@ -43,6 +49,7 @@ function usage(): never {
 function parseArgs(argv: string[]): {
   input: PassageInput;
   decompose: boolean;
+  stdout: boolean;
   outPath?: string;
 } {
   let workTitle: string | undefined;
@@ -50,11 +57,16 @@ function parseArgs(argv: string[]): {
   let greekText: string | undefined;
   let author: string | undefined;
   let decompose = false;
+  let stdout = false;
   let outPath: string | undefined;
 
   for (const arg of argv) {
     if (arg === "--decompose") {
       decompose = true;
+      continue;
+    }
+    if (arg === "--stdout") {
+      stdout = true;
       continue;
     }
     if (arg.startsWith("--out=")) {
@@ -87,22 +99,24 @@ function parseArgs(argv: string[]): {
 
   const input: PassageInput = { workTitle, citation, greekText };
   if (author) input.author = author;
-  return { input, decompose, outPath };
+  return { input, decompose, stdout, outPath };
 }
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2).filter((arg) => arg !== "--");
-  const { input, decompose, outPath } = parseArgs(argv);
+  const { input, decompose, stdout, outPath } = parseArgs(argv);
 
   try {
     const { draft } = await runLogosPassageAgent(input);
     const json = JSON.stringify(draft, null, 2);
 
-    if (outPath) {
-      writeFileSync(outPath, json, "utf8");
-      console.error(`Wrote draft to ${outPath}`);
-    } else {
+    if (stdout) {
       console.log(json);
+    } else {
+      const target = outPath ?? defaultAgentDraftPath(input);
+      mkdirSync(dirname(target), { recursive: true });
+      writeFileSync(target, json, "utf8");
+      console.error(`Wrote draft to ${target}`);
     }
 
     if (decompose) {

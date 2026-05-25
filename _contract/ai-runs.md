@@ -66,6 +66,24 @@ validation.
 - Granular decomposed rows are optional (`LOGOS_PASSAGE_AGENT_DECOMPOSE=1`); default is master
   `passage_draft` only.
 
+### CLI scratch output
+
+`pnpm agent:passage` writes validated JSON to `.local/agent-drafts/{work}/{citation}.json`
+(gitignored). This is operator scratch space — not canonical content and not committed.
+Stable hand-curated shapes for tests live in `lib/agents/fixtures/`. Flux persistence
+(`ai_runs`) is separate:
+
+```bash
+# Generate locally (requires CURSOR_API_KEY)
+pnpm agent:passage:odyssey-1-1
+
+# Import local JSON into ai_runs (requires FLUX_URL + FLUX_GATEWAY_JWT_SECRET)
+pnpm agent:passage:import:odyssey-1-1
+```
+
+Use `pnpm agent:passage:import -- --passage-id=<uuid> --file=path.json` for other passages.
+JWT `sub` defaults to `LOGOS_FLUX_SUB` or `logos-cli-operator`.
+
 ## Draft review (Reading Desk)
 
 The Reading Desk **AI Draft** bottom tab renders the latest `passage_draft` JSON for manual

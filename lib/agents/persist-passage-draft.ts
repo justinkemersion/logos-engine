@@ -2,8 +2,7 @@ import "server-only";
 
 import { getPassage } from "@/lib/flux/passages";
 import { getWork } from "@/lib/flux/works";
-import { createAiRun } from "@/lib/flux/ai-runs";
-import { decomposePassageDraft } from "./decompose-passage-draft";
+import { persistPassageDraftToAiRuns } from "./persist-passage-draft-core";
 import { runLogosPassageAgent } from "./logos-passage-agent";
 import type { PassageInput } from "./logos-passage-draft";
 import type { AiRunRow } from "@/lib/types/entities";
@@ -28,28 +27,11 @@ export async function runAndPersistPassageDraft(
 
   const { draft, model, prompt } = await runLogosPassageAgent(input);
 
-  const master = await createAiRun(sub, {
-    passage_id: passageId,
-    run_type: "passage_draft",
-    model,
-    prompt,
-    output: JSON.stringify(draft, null, 2),
-  });
-
-  if (options?.decompose) {
-    const payloads = decomposePassageDraft(draft).filter(
-      (p) => p.runType !== "passage_draft",
-    );
-    for (const payload of payloads) {
-      await createAiRun(sub, {
-        passage_id: passageId,
-        run_type: payload.runType,
-        model,
-        prompt: null,
-        output: payload.output,
-      });
-    }
-  }
-
-  return master;
+  return persistPassageDraftToAiRuns(
+    sub,
+    passageId,
+    draft,
+    { model, prompt },
+    options,
+  );
 }
