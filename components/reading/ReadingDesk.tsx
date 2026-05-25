@@ -6,6 +6,7 @@ import { ReadingDeskTabs } from "./ReadingDeskTabs";
 import { InterlinearTokenGrid } from "./InterlinearTokenGrid";
 import { ReadingDeskBottomPanel } from "./ReadingDeskBottomPanel";
 import { ReadingDeskRightRail } from "./ReadingDeskRightRail";
+import { TranslationLayerPanel } from "./TranslationLayerPanel";
 import { ReviewBadge } from "./ReviewBadge";
 import { ReviewControls } from "./ReviewControls";
 import { pickPreferredLayer } from "@/lib/reading/review-display";
@@ -69,6 +70,7 @@ export function ReadingDesk(props: ReadingDeskProps) {
               passage={passage}
               tokens={tokens}
               translationVariants={translationVariants}
+              translationLayers={translationLayers}
               selectedToken={selectedToken}
               onTokenClick={handleTokenClick}
               onCloseInspector={() => setSelectedToken(null)}
@@ -79,27 +81,15 @@ export function ReadingDesk(props: ReadingDeskProps) {
           ) : null}
 
           {activeTab === "readable" ? (
-            <div>
-              <p className="mb-1 text-[0.65rem] font-semibold uppercase tracking-widest text-[var(--muted-fg)]">
-                Readable English
-              </p>
-              <p
-                className="text-base leading-relaxed"
-                style={{ fontFamily: "var(--font-serif)" }}
-              >
-                {readableLayer?.content ?? "No readable layer available."}
-              </p>
-              {readableLayer ? (
-                <>
-                  <ReviewBadge row={readableLayer} />
-                  <ReviewControls
-                    passageId={passage.id}
-                    target="translation_layer"
-                    row={readableLayer}
-                  />
-                </>
-              ) : null}
-            </div>
+            <TranslationLayerPanel
+              passageId={passage.id}
+              title="Readable English"
+              layerName="readable"
+              primaryLayer={readableLayer}
+              allLayers={translationLayers}
+              emptyMessage="No readable layer available."
+              useSerif
+            />
           ) : null}
 
           {activeTab === "commentary" ? (
@@ -151,6 +141,7 @@ export function ReadingDesk(props: ReadingDeskProps) {
       </div>
 
       <ReadingDeskRightRail
+        translationLayers={translationLayers}
         readableLayer={readableLayer}
         philosophicalLayer={philosophicalLayer}
         philosophicalNotes={philosophicalNotes}

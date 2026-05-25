@@ -1,13 +1,13 @@
 import { TokenRow as TokenRowComponent } from "./TokenRow";
 import { TokenInspector } from "./TokenInspector";
-import { ReviewBadge } from "./ReviewBadge";
-import { ReviewControls } from "./ReviewControls";
+import { TranslationLayerPanel } from "./TranslationLayerPanel";
 import type { PassageRow, TokenRow, TranslationLayerRow, TranslationVariantRow } from "@/lib/types/entities";
 
 export function InterlinearTokenGrid({
   passage,
   tokens,
   translationVariants,
+  translationLayers,
   selectedToken,
   onTokenClick,
   onCloseInspector,
@@ -18,6 +18,7 @@ export function InterlinearTokenGrid({
   passage: PassageRow;
   tokens: TokenRow[];
   translationVariants: TranslationVariantRow[];
+  translationLayers: TranslationLayerRow[];
   selectedToken: TokenRow | null;
   onTokenClick: (token: TokenRow) => void;
   onCloseInspector: () => void;
@@ -54,19 +55,15 @@ export function InterlinearTokenGrid({
           </p>
         )}
       </div>
-      {showLiteralLayer && literalLayer ? (
+      {showLiteralLayer ? (
         <div className="mt-4 border-t border-[var(--border)] pt-4">
-          <p className="mb-1 text-[0.65rem] font-semibold uppercase tracking-widest text-[var(--muted-fg)]">
-            Literal
-          </p>
-          <p className="text-base leading-relaxed text-[var(--foreground)]">
-            {literalLayer.content}
-          </p>
-          <ReviewBadge row={literalLayer} />
-          <ReviewControls
+          <TranslationLayerPanel
             passageId={passageId}
-            target="translation_layer"
-            row={literalLayer}
+            title="Literal"
+            layerName="literal"
+            primaryLayer={literalLayer}
+            allLayers={translationLayers}
+            emptyMessage="No literal layer available."
           />
         </div>
       ) : null}

@@ -42,6 +42,19 @@ export function pickPreferredLayer(
   return candidates.sort((a, b) => layerPriority(b) - layerPriority(a))[0];
 }
 
+/** AI-promoted layers for a type, excluding the primary row already on display. */
+export function listAiLayerAlternatives(
+  layers: TranslationLayerRow[],
+  layerName: string,
+  primary?: TranslationLayerRow,
+): TranslationLayerRow[] {
+  const aiLayers = layers.filter(
+    (l) => l.layer === layerName && isAiPromoted(l),
+  );
+  if (!primary) return aiLayers;
+  return aiLayers.filter((l) => l.id !== primary.id);
+}
+
 function layerPriority(layer: TranslationLayerRow): number {
   if (layer.status === "accepted") return 3;
   if (layer.status === "draft" && layer.source_ai_run_id) return 2;

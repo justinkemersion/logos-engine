@@ -1,5 +1,6 @@
 import { AuthenticityCard } from "./AuthenticityCard";
 import { CrossReferencesPanel } from "./CrossReferencesPanel";
+import { TranslationLayerPanel } from "./TranslationLayerPanel";
 import { ReviewBadge } from "./ReviewBadge";
 import { ReviewControls } from "./ReviewControls";
 import type {
@@ -13,6 +14,7 @@ import type {
 } from "@/lib/types/entities";
 
 export function ReadingDeskRightRail({
+  translationLayers,
   readableLayer,
   philosophicalLayer,
   philosophicalNotes,
@@ -23,6 +25,7 @@ export function ReadingDeskRightRail({
   uniqueConcepts,
   conceptMentions,
 }: {
+  translationLayers: TranslationLayerRow[];
   readableLayer: TranslationLayerRow | undefined;
   philosophicalLayer: TranslationLayerRow | undefined;
   philosophicalNotes: CommentaryNoteRow[];
@@ -39,23 +42,28 @@ export function ReadingDeskRightRail({
     <aside className="hidden xl:flex w-[280px] flex-shrink-0 flex-col overflow-y-auto border-l border-[var(--border)] bg-[var(--surface)]">
       {readableLayer ? (
         <RightSection title="Readable English">
-          <p className="text-xs text-[var(--foreground)] leading-relaxed">
-            {readableLayer.content}
-          </p>
-          <ReviewBadge row={readableLayer} />
+          <TranslationLayerPanel
+            passageId={passage.id}
+            title=""
+            layerName="readable"
+            primaryLayer={readableLayer}
+            allLayers={translationLayers}
+            emptyMessage="No readable layer available."
+            contentClassName="text-xs text-[var(--foreground)] leading-relaxed"
+          />
         </RightSection>
       ) : null}
 
       {philosophicalLayer ? (
         <RightSection title="Philosophical Notes">
-          <p className="text-xs text-[var(--foreground)] leading-relaxed">
-            {philosophicalLayer.content}
-          </p>
-          <ReviewBadge row={philosophicalLayer} />
-          <ReviewControls
+          <TranslationLayerPanel
             passageId={passage.id}
-            target="translation_layer"
-            row={philosophicalLayer}
+            title=""
+            layerName="philosophical"
+            primaryLayer={philosophicalLayer}
+            allLayers={translationLayers}
+            emptyMessage="No philosophical layer available."
+            contentClassName="text-xs text-[var(--foreground)] leading-relaxed"
           />
         </RightSection>
       ) : philosophicalNotes.length > 0 ? (
@@ -130,9 +138,11 @@ function RightSection({
 }) {
   return (
     <div className="border-b border-[var(--border)] px-4 py-4 last:border-0">
-      <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-widest text-[var(--muted-fg)]">
-        {title}
-      </p>
+      {title ? (
+        <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-widest text-[var(--muted-fg)]">
+          {title}
+        </p>
+      ) : null}
       {children}
     </div>
   );

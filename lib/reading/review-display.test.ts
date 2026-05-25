@@ -3,6 +3,7 @@ import {
   badgeLabel,
   isAiPromoted,
   isReviewed,
+  listAiLayerAlternatives,
   pickPreferredLayer,
 } from "./review-display";
 import type { TranslationLayerRow } from "@/lib/types/entities";
@@ -54,5 +55,32 @@ describe("review-display", () => {
   it("shows reviewed badge for accepted layers", () => {
     const row = layer({ source_ai_run_id: "run-1", status: "accepted" });
     expect(badgeLabel(row)).toBe("Reviewed");
+  });
+
+  it("lists AI alternatives when primary is seed accepted", () => {
+    const seed = layer({
+      id: "seed",
+      status: "accepted",
+      source_ai_run_id: null,
+      content: "seed text",
+    });
+    const ai = layer({
+      id: "ai",
+      status: "draft",
+      source_ai_run_id: "run-1",
+      content: "ai text",
+    });
+    const layers = [seed, ai];
+
+    expect(listAiLayerAlternatives(layers, "readable", seed)).toEqual([ai]);
+    expect(listAiLayerAlternatives(layers, "readable", ai)).toEqual([]);
+  });
+
+  it("lists other AI rows when primary is already AI", () => {
+    const ai1 = layer({ id: "ai-1", source_ai_run_id: "run-1" });
+    const ai2 = layer({ id: "ai-2", source_ai_run_id: "run-2" });
+    const layers = [ai1, ai2];
+
+    expect(listAiLayerAlternatives(layers, "readable", ai1)).toEqual([ai2]);
   });
 });

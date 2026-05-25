@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import {
   markCommentaryNoteDraftAction,
@@ -28,6 +29,7 @@ export function ReviewControls({
   target: ReviewTarget;
   row: ReviewableRow;
 }) {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -41,6 +43,8 @@ export function ReviewControls({
         : await markDraft(passageId, target, row);
       if (!result.ok) {
         setError(result.error);
+      } else {
+        router.refresh();
       }
     });
   }
