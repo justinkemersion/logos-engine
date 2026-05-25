@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { getPassage, listPassagesByWork } from "@/lib/flux/passages";
-import { getWork, getAuthenticity } from "@/lib/flux/works";
+import { getWorkById, getAuthenticity } from "@/lib/flux/works";
 import { listTokensForPassage } from "@/lib/flux/tokens";
 import { listTranslationLayers, listTranslationVariants } from "@/lib/flux/translations";
 import { listCommentaryNotes, listConceptMentions } from "@/lib/flux/commentary";
@@ -66,7 +66,7 @@ export default async function PassagePage({ params }: { params: Promise<{ id: st
     PassageRow[],
     AiRunRow | null,
   ] = await Promise.all([
-    safe(() => getWork(sub, passage.work_id), null),
+    safe(() => getWorkById(sub, passage.work_id), null),
     safe(() => listTokensForPassage(sub, passage.id), []),
     safe(() => listTranslationLayers(sub, passage.id), []),
     safe(() => listTranslationVariants(sub, passage.id), []),

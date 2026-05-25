@@ -1,7 +1,7 @@
 import "server-only";
 
 import { getPassage } from "@/lib/flux/passages";
-import { getWork } from "@/lib/flux/works";
+import { getWorkById } from "@/lib/flux/works";
 import { persistPassageDraftToAiRuns } from "./persist-passage-draft-core";
 import { runLogosPassageAgent } from "./logos-passage-agent";
 import type { PassageInput } from "./logos-passage-draft";
@@ -17,7 +17,7 @@ export async function runAndPersistPassageDraft(
     throw new Error("Passage not found");
   }
 
-  const work = await getWork(sub, passage.work_id);
+  const work = await getWorkById(sub, passage.work_id);
   const input: PassageInput = {
     workTitle: work?.title ?? "Unknown",
     citation: passage.citation_ref,

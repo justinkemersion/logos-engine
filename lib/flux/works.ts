@@ -10,6 +10,11 @@ export async function getWork(sub: string, slug: string): Promise<WorkRow | null
   return rows[0] ?? null;
 }
 
+export async function getWorkById(sub: string, id: string): Promise<WorkRow | null> {
+  const rows = await fluxJson<WorkRow[]>(sub, `/works?id=eq.${encodeURIComponent(id)}&limit=1`);
+  return rows[0] ?? null;
+}
+
 export async function getAuthenticity(
   sub: string,
   workId: string,
