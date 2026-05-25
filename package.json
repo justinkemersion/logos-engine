@@ -39,8 +39,10 @@
     "flux:doctor": "tsx scripts/flux-doctor.ts",
     "agent:passage": "tsx scripts/logos-passage-agent.ts",
     "agent:passage:odyssey-1-1": "pnpm agent:passage -- --work-title=Odyssey --citation=1.1 --author=Homer --greek=\"ἄνδρα μοι ἔννεπε, Μοῦσα, πολύτροπον\" --decompose",
+    "agent:passage:iliad-1-1": "pnpm agent:passage -- --work-title=Iliad --citation=1.1 --author=Homer --greek=\"Μῆνιν ἄειδε, θεά, Πηληϊάδεω Ἀχιλῆος\" --decompose",
     "agent:passage:import": "tsx scripts/import-passage-draft.ts",
-    "agent:passage:import:odyssey-1-1": "pnpm agent:passage:import -- --passage-id=00000000-0000-0000-0002-000000000001 --work-title=Odyssey --citation=1.1 --decompose"
+    "agent:passage:import:odyssey-1-1": "pnpm agent:passage:import -- --passage-id=00000000-0000-0000-0002-000000000001 --work-title=Odyssey --citation=1.1 --decompose",
+    "agent:passage:import:iliad-1-1": "pnpm agent:passage:import -- --passage-id=00000000-0000-0000-0002-000000000002 --work-title=Iliad --citation=1.1 --decompose"
   },
   "dependencies": {
     "@cursor/sdk": "^1.0.13",

@@ -90,6 +90,10 @@ pnpm agent:passage:odyssey-1-1
 
 # Import that file into ai_runs (requires FLUX_URL + FLUX_GATEWAY_JWT_SECRET)
 pnpm agent:passage:import:odyssey-1-1
+
+# Iliad 1.1 (second MVP editorial proof)
+pnpm agent:passage:iliad-1-1
+pnpm agent:passage:import:iliad-1-1
 ```
 
 Or run the generic commands:
