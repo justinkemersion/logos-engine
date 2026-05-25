@@ -4,15 +4,27 @@ import type { AiRunRow } from "@/lib/types/entities";
 
 export function GenerateDraftButton({
   latestDraftRun,
+  onViewDraft,
 }: {
   latestDraftRun: AiRunRow | null;
+  onViewDraft?: () => void;
 }) {
   return (
     <div className="ml-auto flex items-center gap-2">
       {latestDraftRun ? (
-        <span className="text-xs text-amber-600">
-          Latest AI draft — {formatDraftDate(latestDraftRun.created_at)}
-        </span>
+        onViewDraft ? (
+          <button
+            type="button"
+            onClick={onViewDraft}
+            className="text-xs text-amber-700 hover:underline"
+          >
+            Latest AI draft — {formatDraftDate(latestDraftRun.created_at)}
+          </button>
+        ) : (
+          <span className="text-xs text-amber-600">
+            Latest AI draft — {formatDraftDate(latestDraftRun.created_at)}
+          </span>
+        )
       ) : null}
       <button
         type="button"

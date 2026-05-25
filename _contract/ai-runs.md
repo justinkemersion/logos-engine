@@ -66,6 +66,12 @@ validation.
 - Granular decomposed rows are optional (`LOGOS_PASSAGE_AGENT_DECOMPOSE=1`); default is master
   `passage_draft` only.
 
+## Draft review (Reading Desk)
+
+The Reading Desk **AI Draft** bottom tab renders the latest `passage_draft` JSON for manual
+review. Content is labeled **AI Draft — not canonical**. Copy actions are provided; no
+promotion to translation or commentary tables occurs in the review slice.
+
 ## What AI must not do
 
 - Author the final readable layer without review

@@ -1,3 +1,4 @@
+import type { LogosPassageDraft } from "@/lib/agents/logos-passage-draft";
 import type {
   AuthenticityProfileRow,
   CommentaryNoteRow,
@@ -13,7 +14,7 @@ import type {
 } from "@/lib/types/entities";
 
 export type TranslationTab = "greek" | "literal" | "readable" | "commentary";
-export type BottomTab = "grammar" | "notes" | "variants";
+export type BottomTab = "grammar" | "notes" | "variants" | "ai-draft";
 
 export type ReadingDeskProps = {
   work: WorkRow;
@@ -28,4 +29,6 @@ export type ReadingDeskProps = {
   crossRefs: CrossReferenceRow[];
   passageMap: Record<string, PassageRow>;
   latestPassageDraftRun: AiRunRow | null;
+  passageDraft: LogosPassageDraft | null;
+  draftParseError: string | null;
 };

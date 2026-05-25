@@ -8,6 +8,7 @@ import { listCommentaryNotes, listConceptMentions } from "@/lib/flux/commentary"
 import { listConcepts } from "@/lib/flux/concepts";
 import { listCrossReferences } from "@/lib/flux/cross-references";
 import { getLatestAiRunForPassage } from "@/lib/flux/ai-runs";
+import { parsePassageDraftOutput } from "@/lib/agents/parse-passage-draft-output";
 import { ReadingDesk } from "@/components/reading/ReadingDesk";
 import type {
   WorkRow,
@@ -22,6 +23,7 @@ import type {
   PassageRow,
   AiRunRow,
 } from "@/lib/types/entities";
+import type { LogosPassageDraft } from "@/lib/agents/logos-passage-draft";
 
 async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   try {
@@ -100,6 +102,17 @@ export default async function PassagePage({ params }: { params: Promise<{ id: st
     passageMap[p.id] = p;
   }
 
+  let passageDraft: LogosPassageDraft | null = null;
+  let draftParseError: string | null = null;
+  if (latestPassageDraftRun?.output) {
+    const parsed = parsePassageDraftOutput(latestPassageDraftRun.output);
+    if (parsed.ok) {
+      passageDraft = parsed.draft;
+    } else {
+      draftParseError = parsed.error;
+    }
+  }
+
   return (
     <ReadingDesk
       work={work ?? fallbackWork}
@@ -114,6 +127,8 @@ export default async function PassagePage({ params }: { params: Promise<{ id: st
       crossRefs={crossRefs}
       passageMap={passageMap}
       latestPassageDraftRun={latestPassageDraftRun}
+      passageDraft={passageDraft}
+      draftParseError={draftParseError}
     />
   );
 }

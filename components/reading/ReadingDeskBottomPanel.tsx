@@ -2,7 +2,9 @@
 
 import { cn } from "@/lib/ui/cn";
 import { GenerateDraftButton } from "./GenerateDraftButton";
+import { AiDraftReviewPanel } from "./AiDraftReviewPanel";
 import type { BottomTab } from "./reading-desk-types";
+import type { LogosPassageDraft } from "@/lib/agents/logos-passage-draft";
 import type {
   AiRunRow,
   CommentaryNoteRow,
@@ -10,7 +12,7 @@ import type {
   TranslationVariantRow,
 } from "@/lib/types/entities";
 
-const BOTTOM_TABS: BottomTab[] = ["grammar", "notes", "variants"];
+const BASE_BOTTOM_TABS: BottomTab[] = ["grammar", "notes", "variants"];
 
 export function ReadingDeskBottomPanel({
   bottomTab,
@@ -19,6 +21,8 @@ export function ReadingDeskBottomPanel({
   passage,
   translationVariants,
   latestPassageDraftRun,
+  passageDraft,
+  draftParseError,
 }: {
   bottomTab: BottomTab;
   onBottomTabChange: (tab: BottomTab) => void;
@@ -26,14 +30,22 @@ export function ReadingDeskBottomPanel({
   passage: PassageRow;
   translationVariants: TranslationVariantRow[];
   latestPassageDraftRun: AiRunRow | null;
+  passageDraft: LogosPassageDraft | null;
+  draftParseError: string | null;
 }) {
+  const hasDraftTab = Boolean(latestPassageDraftRun);
+  const bottomTabs: BottomTab[] = hasDraftTab
+    ? [...BASE_BOTTOM_TABS, "ai-draft"]
+    : BASE_BOTTOM_TABS;
+  const expanded = bottomTab === "ai-draft";
+
   return (
     <div
       className="border-t border-[var(--border)] bg-[var(--surface)]"
-      style={{ minHeight: 160 }}
+      style={{ minHeight: expanded ? 320 : 160 }}
     >
       <div className="flex border-b border-[var(--border)] px-6">
-        {BOTTOM_TABS.map((tab) => (
+        {bottomTabs.map((tab) => (
           <button
             key={tab}
             type="button"
@@ -43,14 +55,23 @@ export function ReadingDeskBottomPanel({
               bottomTab === tab
                 ? "border-[var(--accent)] text-[var(--accent)]"
                 : "border-transparent text-[var(--muted-fg)] hover:text-[var(--foreground)]",
+              tab === "ai-draft" && bottomTab !== "ai-draft" && "text-amber-700",
             )}
           >
-            {tab}
+            {tab === "ai-draft" ? "AI Draft" : tab}
           </button>
         ))}
-        <GenerateDraftButton latestDraftRun={latestPassageDraftRun} />
+        <GenerateDraftButton
+          latestDraftRun={latestPassageDraftRun}
+          onViewDraft={
+            hasDraftTab ? () => onBottomTabChange("ai-draft") : undefined
+          }
+        />
       </div>
-      <div className="overflow-y-auto p-4 text-sm" style={{ maxHeight: 160 }}>
+      <div
+        className="overflow-y-auto p-4 text-sm"
+        style={{ maxHeight: expanded ? "min(50vh, 480px)" : 160 }}
+      >
         {bottomTab === "grammar" ? (
           grammarNotes.length > 0 ? (
             <ul className="space-y-2">
@@ -93,6 +114,13 @@ export function ReadingDeskBottomPanel({
           ) : (
             <p className="text-xs text-[var(--muted-fg)]">No variants for this passage.</p>
           )
+        ) : null}
+        {bottomTab === "ai-draft" ? (
+          <AiDraftReviewPanel
+            draft={passageDraft}
+            run={latestPassageDraftRun}
+            parseError={draftParseError}
+          />
         ) : null}
       </div>
     </div>

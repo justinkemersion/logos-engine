@@ -23,6 +23,8 @@ export function ReadingDesk(props: ReadingDeskProps) {
     crossRefs,
     passageMap,
     latestPassageDraftRun,
+    passageDraft,
+    draftParseError,
   } = props;
 
   const [activeTab, setActiveTab] = useState<TranslationTab>("literal");
@@ -126,6 +128,8 @@ export function ReadingDesk(props: ReadingDeskProps) {
           passage={passage}
           translationVariants={translationVariants}
           latestPassageDraftRun={latestPassageDraftRun}
+          passageDraft={passageDraft}
+          draftParseError={draftParseError}
         />
       </div>
 
