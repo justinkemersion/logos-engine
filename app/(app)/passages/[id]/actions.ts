@@ -12,6 +12,17 @@ import {
   type PromotePassageDraftSelection,
   type PromotionResult,
 } from "@/lib/agents/promote-passage-draft";
+import {
+  ReviewPromotedContentError,
+  markCommentaryNoteDraft,
+  markCommentaryNoteReviewed,
+  markConceptMentionDraft,
+  markConceptMentionReviewed,
+  markTranslationLayerDraft,
+  markTranslationLayerReviewed,
+  markTranslationVariantDraft,
+  markTranslationVariantReviewed,
+} from "@/lib/agents/review-promoted-content";
 import { shouldDecomposePassageDraft } from "@/lib/config/agent";
 import type { ActionResult } from "@/lib/actions/result";
 import { actionError } from "@/lib/actions/result";
@@ -88,4 +99,81 @@ export async function promotePassageDraftAction(
   } catch {
     return actionError("Promotion failed");
   }
+}
+
+async function reviewAction<T>(
+  passageId: string,
+  fn: (sub: string) => Promise<T>,
+): Promise<ActionResult<T>> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { ok: false, error: "Not authenticated" };
+  }
+
+  try {
+    const data = await fn(session.user.id);
+    revalidatePath(`/passages/${passageId}`);
+    return { ok: true, data };
+  } catch (error) {
+    if (error instanceof ReviewPromotedContentError) {
+      return { ok: false, error: error.message };
+    }
+    return actionError("Review action failed");
+  }
+}
+
+export async function markTranslationLayerReviewedAction(
+  passageId: string,
+  id: string,
+  reviewerNote?: string,
+) {
+  return reviewAction(passageId, (sub) =>
+    markTranslationLayerReviewed(sub, id, sub, reviewerNote),
+  );
+}
+
+export async function markTranslationLayerDraftAction(passageId: string, id: string) {
+  return reviewAction(passageId, (sub) => markTranslationLayerDraft(sub, id));
+}
+
+export async function markTranslationVariantReviewedAction(
+  passageId: string,
+  id: string,
+  reviewerNote?: string,
+) {
+  return reviewAction(passageId, (sub) =>
+    markTranslationVariantReviewed(sub, id, sub, reviewerNote),
+  );
+}
+
+export async function markTranslationVariantDraftAction(passageId: string, id: string) {
+  return reviewAction(passageId, (sub) => markTranslationVariantDraft(sub, id));
+}
+
+export async function markCommentaryNoteReviewedAction(
+  passageId: string,
+  id: string,
+  reviewerNote?: string,
+) {
+  return reviewAction(passageId, (sub) =>
+    markCommentaryNoteReviewed(sub, id, sub, reviewerNote),
+  );
+}
+
+export async function markCommentaryNoteDraftAction(passageId: string, id: string) {
+  return reviewAction(passageId, (sub) => markCommentaryNoteDraft(sub, id));
+}
+
+export async function markConceptMentionReviewedAction(
+  passageId: string,
+  id: string,
+  reviewerNote?: string,
+) {
+  return reviewAction(passageId, (sub) =>
+    markConceptMentionReviewed(sub, id, sub, reviewerNote),
+  );
+}
+
+export async function markConceptMentionDraftAction(passageId: string, id: string) {
+  return reviewAction(passageId, (sub) => markConceptMentionDraft(sub, id));
 }

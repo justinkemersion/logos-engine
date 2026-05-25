@@ -93,8 +93,12 @@ pnpm agent:passage -- --work-title="Odyssey" --citation="1.1" \
   --out=draft.json
 ```
 
-Promotion to `translation_layers`, `tokens`, etc. is future editorial work. See
-[`_contract/ai-runs.md`](_contract/ai-runs.md).
+Promotion selectively copies draft items into canonical tables (`translation_layers`,
+`translation_variants`, `commentary_notes`, `concept_mentions`) as unreviewed rows with
+`source_ai_run_id` provenance. Re-promotion is idempotent. Operators mark promoted rows
+reviewed via Reading Desk controls. See [`_contract/ai-runs.md`](_contract/ai-runs.md).
+
+Push migrations through `0011_promotion_provenance.sql` for review actions and provenance fields.
 
 | Command | Purpose |
 |---------|---------|

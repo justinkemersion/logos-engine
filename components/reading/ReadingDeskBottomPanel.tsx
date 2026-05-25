@@ -3,6 +3,8 @@
 import { cn } from "@/lib/ui/cn";
 import { GenerateDraftButton } from "./GenerateDraftButton";
 import { AiDraftReviewPanel } from "./AiDraftReviewPanel";
+import { ReviewBadge } from "./ReviewBadge";
+import { ReviewControls } from "./ReviewControls";
 import type { BottomTab } from "./reading-desk-types";
 import type { LogosPassageDraft } from "@/lib/agents/logos-passage-draft";
 import type {
@@ -108,6 +110,12 @@ export function ReadingDeskBottomPanel({
                       — {v.tradeoff_note.slice(0, 120)}…
                     </span>
                   ) : null}
+                  <ReviewBadge row={v} />
+                  <ReviewControls
+                    passageId={passage.id}
+                    target="translation_variant"
+                    row={v}
+                  />
                 </li>
               ))}
             </ul>

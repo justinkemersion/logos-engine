@@ -26,6 +26,8 @@ flux push sql/migrations/0005_commentary_concepts_ai.sql
 flux push sql/migrations/0006_commentary_grants.sql
 flux push sql/migrations/0007_seed_mvp_texts.sql
 flux push sql/migrations/0009_ai_runs_insert.sql
+flux push sql/migrations/0010_editorial_promotion_grants.sql
+flux push sql/migrations/0011_promotion_provenance.sql
 
 # Sync schema name to .env.local
 pnpm flux:schema:sync
@@ -70,7 +72,16 @@ See `sql/migrations/README.md` for the full migration map.
 
 The `logos-passage-agent` (see `prompts/logos-passage-agent.md`) produces validated
 `LogosPassageDraft` JSON. Persistence writes **`ai_runs` only** with `run_type = passage_draft`.
-Drafts are not canonical content until editorial promotion (future work).
+
+Editorial lifecycle:
+
+```
+agent output → ai_runs.passage_draft → promoted canonical draft → reviewed canonical content
+```
+
+- **AI draft** = generated artifact in `ai_runs` (not canonical)
+- **Promoted draft** = canonical table row, still unreviewed
+- **Reviewed** = human accepted (`translation_layers.status = accepted`; other tables `review_status = reviewed`)
 
 ```bash
 # Requires CURSOR_API_KEY in .env
@@ -91,9 +102,18 @@ Optional env:
 | `LOGOS_PASSAGE_DRAFT_UI_ENABLED=1` | Enable Reading Desk generate button |
 | `LOGOS_PASSAGE_AGENT_DECOMPOSE=1` | Also persist granular `ai_runs` rows |
 
-After pushing `0010_editorial_promotion_grants.sql`, the Reading Desk **AI Draft** tab supports
-selective promotion into canonical tables (as draft rows). Concept mentions require an existing
-`concept_threads` row.
+After pushing `0010_editorial_promotion_grants.sql` and `0011_promotion_provenance.sql`,
+the Reading Desk supports selective **promotion** (idempotent, with `source_ai_run_id`
+provenance) and **review** (mark reviewed / return to draft) on promoted canonical rows.
+Concept mentions require an existing `concept_threads` row.
+
+### Manual verification (promotion + review)
+
+1. Generate/persist an Odyssey 1.1 draft (`generatePassageDraftAction` or CLI).
+2. Promote literal layer + variants from the AI Draft tab.
+3. Re-promote the same selections — confirm no duplicate rows (content updates in place).
+4. Mark the promoted literal layer reviewed — badge changes from
+   `AI Draft — not yet reviewed` to `Reviewed`.
 
 ## Checking for drift
 

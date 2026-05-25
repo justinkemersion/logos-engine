@@ -1,5 +1,7 @@
 import { TokenRow as TokenRowComponent } from "./TokenRow";
 import { TokenInspector } from "./TokenInspector";
+import { ReviewBadge } from "./ReviewBadge";
+import { ReviewControls } from "./ReviewControls";
 import type { PassageRow, TokenRow, TranslationLayerRow, TranslationVariantRow } from "@/lib/types/entities";
 
 export function InterlinearTokenGrid({
@@ -11,6 +13,7 @@ export function InterlinearTokenGrid({
   onCloseInspector,
   literalLayer,
   showLiteralLayer,
+  passageId,
 }: {
   passage: PassageRow;
   tokens: TokenRow[];
@@ -20,6 +23,7 @@ export function InterlinearTokenGrid({
   onCloseInspector: () => void;
   literalLayer: TranslationLayerRow | undefined;
   showLiteralLayer: boolean;
+  passageId: string;
 }) {
   return (
     <div className="space-y-4">
@@ -58,6 +62,12 @@ export function InterlinearTokenGrid({
           <p className="text-base leading-relaxed text-[var(--foreground)]">
             {literalLayer.content}
           </p>
+          <ReviewBadge row={literalLayer} />
+          <ReviewControls
+            passageId={passageId}
+            target="translation_layer"
+            row={literalLayer}
+          />
         </div>
       ) : null}
     </div>

@@ -65,6 +65,9 @@ export type TranslationLayerRow = {
   content: string;
   status: string;
   reviewer_note: string | null;
+  source_ai_run_id: string | null;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -79,6 +82,11 @@ export type TranslationVariantRow = {
   rationale: string | null;
   confidence: string | null;
   tradeoff_note: string | null;
+  source_ai_run_id: string | null;
+  review_status: string;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+  reviewer_note: string | null;
   created_at: string;
 };
 
@@ -88,6 +96,11 @@ export type CommentaryNoteRow = {
   note_type: string;
   title: string | null;
   body: string;
+  source_ai_run_id: string | null;
+  review_status: string;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+  reviewer_note: string | null;
   created_at: string;
 };
 
@@ -106,6 +119,11 @@ export type ConceptMentionRow = {
   passage_id: string | null;
   token_id: string | null;
   note: string | null;
+  source_ai_run_id: string | null;
+  review_status: string;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+  reviewer_note: string | null;
   created_at: string;
 };
 

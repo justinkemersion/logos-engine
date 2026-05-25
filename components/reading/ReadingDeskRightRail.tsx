@@ -1,8 +1,11 @@
 import { AuthenticityCard } from "./AuthenticityCard";
 import { CrossReferencesPanel } from "./CrossReferencesPanel";
+import { ReviewBadge } from "./ReviewBadge";
+import { ReviewControls } from "./ReviewControls";
 import type {
   AuthenticityProfileRow,
   CommentaryNoteRow,
+  ConceptMentionRow,
   ConceptThreadRow,
   CrossReferenceRow,
   PassageRow,
@@ -18,6 +21,7 @@ export function ReadingDeskRightRail({
   passageMap,
   authenticity,
   uniqueConcepts,
+  conceptMentions,
 }: {
   readableLayer: TranslationLayerRow | undefined;
   philosophicalLayer: TranslationLayerRow | undefined;
@@ -27,7 +31,10 @@ export function ReadingDeskRightRail({
   passageMap: Record<string, PassageRow>;
   authenticity: AuthenticityProfileRow | null;
   uniqueConcepts: ConceptThreadRow[];
+  conceptMentions: ConceptMentionRow[];
 }) {
+  const aiPromotedMentions = conceptMentions.filter((m) => m.source_ai_run_id);
+
   return (
     <aside className="hidden xl:flex w-[280px] flex-shrink-0 flex-col overflow-y-auto border-l border-[var(--border)] bg-[var(--surface)]">
       {readableLayer ? (
@@ -35,6 +42,7 @@ export function ReadingDeskRightRail({
           <p className="text-xs text-[var(--foreground)] leading-relaxed">
             {readableLayer.content}
           </p>
+          <ReviewBadge row={readableLayer} />
         </RightSection>
       ) : null}
 
@@ -43,16 +51,25 @@ export function ReadingDeskRightRail({
           <p className="text-xs text-[var(--foreground)] leading-relaxed">
             {philosophicalLayer.content}
           </p>
+          <ReviewBadge row={philosophicalLayer} />
+          <ReviewControls
+            passageId={passage.id}
+            target="translation_layer"
+            row={philosophicalLayer}
+          />
         </RightSection>
       ) : philosophicalNotes.length > 0 ? (
         <RightSection title="Philosophical Notes">
           {philosophicalNotes.map((n) => (
-            <p
-              key={n.id}
-              className="text-xs text-[var(--foreground)] leading-relaxed mb-2 last:mb-0"
-            >
-              {n.body}
-            </p>
+            <div key={n.id} className="mb-2 last:mb-0">
+              <p className="text-xs text-[var(--foreground)] leading-relaxed">{n.body}</p>
+              <ReviewBadge row={n} />
+              <ReviewControls
+                passageId={passage.id}
+                target="commentary_note"
+                row={n}
+              />
+            </div>
           ))}
         </RightSection>
       ) : null}
@@ -84,6 +101,20 @@ export function ReadingDeskRightRail({
               </a>
             ))}
           </div>
+          {aiPromotedMentions.length > 0 ? (
+            <div className="mt-3 space-y-2 border-t border-[var(--border)] pt-3">
+              {aiPromotedMentions.map((mention) => (
+                <div key={mention.id}>
+                  <ReviewBadge row={mention} />
+                  <ReviewControls
+                    passageId={passage.id}
+                    target="concept_mention"
+                    row={mention}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : null}
         </RightSection>
       ) : null}
     </aside>

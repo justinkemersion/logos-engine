@@ -78,6 +78,23 @@ After review, operators may **selectively promote** items from a `passage_draft`
 canonical tables via the Reading Desk. Promoted rows land with `status: draft` on
 translation layers (not auto-accepted). The source `ai_runs` row is marked `revised`.
 
+Promotion is **idempotent**: re-promoting the same selections updates existing rows keyed
+by `source_ai_run_id` rather than creating duplicates.
+
+### Editorial lifecycle
+
+```
+agent output → ai_runs.passage_draft → promoted canonical draft → reviewed canonical content
+```
+
+| Stage | Where | Meaning |
+|-------|-------|---------|
+| AI draft | `ai_runs.output` | Generated artifact; not canonical |
+| Promoted draft | canonical tables | Editorial copy, still unreviewed |
+| Reviewed | canonical tables | Human accepted (`translation_layers.status = accepted`; other tables `review_status = reviewed`) |
+
+**Accepted/reviewed** indicates editorial approval — not publication or finalization.
+
 Promotable targets:
 
 - `translation_layers` (literal, readable, philosophical)
@@ -85,7 +102,31 @@ Promotable targets:
 - `commentary_notes`
 - `concept_mentions` (only when a matching `concept_threads` row exists)
 
-Not promoted in this slice: `tokens`, `cross_references`, new concept thread creation.
+Not promoted: `tokens`, `cross_references`, new concept thread creation.
+
+### Provenance fields
+
+AI-promoted canonical rows carry:
+
+| Field | Purpose |
+|-------|---------|
+| `source_ai_run_id` | FK to originating `ai_runs` row — **immutable after insert** |
+| `reviewed_at` | When a human marked the row reviewed |
+| `reviewed_by` | Auth subject (`session.user.id`) of the reviewer |
+| `reviewer_note` | Optional editorial note at review time |
+| `review_status` | On non-layer tables: `draft` \| `reviewed` (may expand to `accepted` \| `rejected` in future migrations) |
+
+**Provenance immutability:** `source_ai_run_id` is set at promotion and must never change.
+Review actions and re-promotions may update review state and content, but may not reassign
+provenance to another `ai_runs` row.
+
+Re-promotion updates content fields only — it does **not** reset `accepted`/`reviewed`
+status or clear `reviewed_at`/`reviewed_by`.
+
+### Review actions
+
+Authenticated operators may mark AI-promoted rows reviewed or return them to draft via
+Reading Desk controls. See `lib/agents/review-promoted-content.ts`.
 
 ## What AI must not do
 

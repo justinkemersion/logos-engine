@@ -63,14 +63,6 @@ export function PromoteDraftForm({
     });
   }
 
-  if (run.status === "revised" || run.status === "accepted") {
-    return (
-      <p className="text-xs text-[var(--muted-fg)]">
-        This AI run is marked {run.status}. Further promotion may duplicate content.
-      </p>
-    );
-  }
-
   return (
     <div className="mt-4 border-t border-[var(--border)] pt-4">
       <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-widest text-[var(--muted-fg)]">
@@ -79,6 +71,9 @@ export function PromoteDraftForm({
       <p className="mb-3 text-xs text-[var(--muted-fg)] leading-relaxed">
         Promote selected items into canonical tables as <strong>draft</strong> rows. Nothing is
         auto-accepted for publication.
+        {run.status === "revised" || run.status === "accepted" ? (
+          <> Re-promotion is idempotent — existing promoted rows are updated, not duplicated.</>
+        ) : null}
       </p>
       <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs">
         {hasLiteral ? (

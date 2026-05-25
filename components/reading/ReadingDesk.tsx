@@ -6,6 +6,9 @@ import { ReadingDeskTabs } from "./ReadingDeskTabs";
 import { InterlinearTokenGrid } from "./InterlinearTokenGrid";
 import { ReadingDeskBottomPanel } from "./ReadingDeskBottomPanel";
 import { ReadingDeskRightRail } from "./ReadingDeskRightRail";
+import { ReviewBadge } from "./ReviewBadge";
+import { ReviewControls } from "./ReviewControls";
+import { pickPreferredLayer } from "@/lib/reading/review-display";
 import type { ReadingDeskProps, TranslationTab, BottomTab } from "./reading-desk-types";
 import type { ConceptThreadRow } from "@/lib/types/entities";
 
@@ -31,7 +34,9 @@ export function ReadingDesk(props: ReadingDeskProps) {
   const [bottomTab, setBottomTab] = useState<BottomTab>("notes");
   const [selectedToken, setSelectedToken] = useState<(typeof tokens)[number] | null>(null);
 
-  const layerMap = Object.fromEntries(translationLayers.map((l) => [l.layer, l]));
+  const readableLayer = pickPreferredLayer(translationLayers, "readable");
+  const philosophicalLayer = pickPreferredLayer(translationLayers, "philosophical");
+  const literalLayer = pickPreferredLayer(translationLayers, "literal");
 
   const grammarNotes = commentaryNotes.filter(
     (n) => n.note_type === "grammatical" || n.note_type === "lexical",
@@ -39,8 +44,6 @@ export function ReadingDesk(props: ReadingDeskProps) {
   const philosophicalNotes = commentaryNotes.filter(
     (n) => n.note_type === "philosophical",
   );
-  const readableLayer = layerMap["readable"];
-  const philosophicalLayer = layerMap["philosophical"];
 
   const mentionedConcepts = conceptMentions
     .map((m) => conceptMap[m.concept_id])
@@ -69,8 +72,9 @@ export function ReadingDesk(props: ReadingDeskProps) {
               selectedToken={selectedToken}
               onTokenClick={handleTokenClick}
               onCloseInspector={() => setSelectedToken(null)}
-              literalLayer={layerMap["literal"]}
+              literalLayer={literalLayer}
               showLiteralLayer={activeTab === "literal"}
+              passageId={passage.id}
             />
           ) : null}
 
@@ -85,8 +89,15 @@ export function ReadingDesk(props: ReadingDeskProps) {
               >
                 {readableLayer?.content ?? "No readable layer available."}
               </p>
-              {readableLayer?.status === "draft" ? (
-                <p className="mt-2 text-xs text-amber-600">AI Draft — not yet reviewed</p>
+              {readableLayer ? (
+                <>
+                  <ReviewBadge row={readableLayer} />
+                  <ReviewControls
+                    passageId={passage.id}
+                    target="translation_layer"
+                    row={readableLayer}
+                  />
+                </>
               ) : null}
             </div>
           ) : null}
@@ -114,6 +125,12 @@ export function ReadingDesk(props: ReadingDeskProps) {
                       <p className="text-sm text-[var(--foreground)] leading-relaxed">
                         {note.body}
                       </p>
+                      <ReviewBadge row={note} />
+                      <ReviewControls
+                        passageId={passage.id}
+                        target="commentary_note"
+                        row={note}
+                      />
                     </div>
                   ))
               )}
@@ -142,6 +159,7 @@ export function ReadingDesk(props: ReadingDeskProps) {
         passageMap={passageMap}
         authenticity={authenticity}
         uniqueConcepts={uniqueConcepts}
+        conceptMentions={conceptMentions}
       />
     </div>
   );

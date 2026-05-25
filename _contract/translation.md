@@ -55,3 +55,23 @@ Every `translation_variants` row with `variant_type` of `literal`, `readable`, o
 - What the variant preserves from the Greek
 - What it loses or obscures
 - Why this choice was made over alternatives
+
+## AI promotion provenance
+
+When content is promoted from `ai_runs.passage_draft`, canonical rows receive:
+
+| Field | Tables | Notes |
+|-------|--------|-------|
+| `source_ai_run_id` | layers, variants, commentary, concept mentions | Immutable after insert |
+| `status` | `translation_layers` only | `draft` → `accepted` at review |
+| `review_status` | variants, commentary, concept mentions | `draft` \| `reviewed` (minimal; may expand to `accepted` \| `rejected`) |
+| `reviewed_at`, `reviewed_by`, `reviewer_note` | all promoted tables | Audit trail at review time |
+
+**Provenance immutability:** once `source_ai_run_id` is set, it must never change.
+Review and re-promotion may update content and review state but not reassign provenance.
+
+**Accepted ≠ final:** `translation_layers.status = accepted` means editorial approval —
+not publication or public-facing finalization.
+
+Partial unique indexes (where `source_ai_run_id IS NOT NULL`) prevent duplicate promotion
+from the same AI run. Seed/manual rows without provenance are unaffected.

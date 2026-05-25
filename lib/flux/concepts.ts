@@ -26,11 +26,37 @@ export async function listMentionsByConcept(
   );
 }
 
+export async function getConceptMention(
+  sub: string,
+  id: string,
+): Promise<ConceptMentionRow | null> {
+  const rows = await fluxJson<ConceptMentionRow[]>(
+    sub,
+    `/concept_mentions?id=eq.${encodeURIComponent(id)}&limit=1`,
+  );
+  return rows[0] ?? null;
+}
+
+export async function findPromotedConceptMention(
+  sub: string,
+  passageId: string,
+  sourceAiRunId: string,
+  conceptId: string,
+): Promise<ConceptMentionRow | null> {
+  const rows = await fluxJson<ConceptMentionRow[]>(
+    sub,
+    `/concept_mentions?passage_id=eq.${encodeURIComponent(passageId)}&source_ai_run_id=eq.${encodeURIComponent(sourceAiRunId)}&concept_id=eq.${encodeURIComponent(conceptId)}&limit=1`,
+  );
+  return rows[0] ?? null;
+}
+
 export type CreateConceptMentionInput = {
   concept_id: string;
   passage_id: string;
   token_id?: string | null;
   note?: string | null;
+  source_ai_run_id?: string | null;
+  review_status?: string;
 };
 
 export async function createConceptMention(
@@ -40,9 +66,39 @@ export async function createConceptMention(
   const rows = await fluxJson<ConceptMentionRow[]>(sub, "/concept_mentions", {
     method: "POST",
     headers: { Prefer: "return=representation" },
-    body: JSON.stringify(input),
+    body: JSON.stringify({
+      review_status: "draft",
+      ...input,
+    }),
   });
   const row = rows[0];
   if (!row) throw new Error("Flux POST /concept_mentions returned no row");
+  return row;
+}
+
+export type UpdateConceptMentionInput = {
+  note?: string | null;
+  review_status?: string;
+  reviewed_at?: string | null;
+  reviewed_by?: string | null;
+  reviewer_note?: string | null;
+};
+
+export async function updateConceptMention(
+  sub: string,
+  id: string,
+  input: UpdateConceptMentionInput,
+): Promise<ConceptMentionRow> {
+  const rows = await fluxJson<ConceptMentionRow[]>(
+    sub,
+    `/concept_mentions?id=eq.${encodeURIComponent(id)}`,
+    {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify(input),
+    },
+  );
+  const row = rows[0];
+  if (!row) throw new Error("Flux PATCH /concept_mentions returned no row");
   return row;
 }
