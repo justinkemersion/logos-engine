@@ -91,6 +91,10 @@ Optional env:
 | `LOGOS_PASSAGE_DRAFT_UI_ENABLED=1` | Enable Reading Desk generate button |
 | `LOGOS_PASSAGE_AGENT_DECOMPOSE=1` | Also persist granular `ai_runs` rows |
 
+After pushing `0010_editorial_promotion_grants.sql`, the Reading Desk **AI Draft** tab supports
+selective promotion into canonical tables (as draft rows). Concept mentions require an existing
+`concept_threads` row.
+
 ## Checking for drift
 
 ```bash

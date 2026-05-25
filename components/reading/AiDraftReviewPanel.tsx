@@ -17,12 +17,15 @@ import {
   formatDraftDate,
   warningLevelClass,
 } from "./AiDraftReviewParts";
+import { PromoteDraftForm } from "./PromoteDraftForm";
 
 export function AiDraftReviewPanel({
+  passageId,
   draft,
   run,
   parseError,
 }: {
+  passageId: string;
   draft: LogosPassageDraft | null;
   run: AiRunRow | null;
   parseError: string | null;
@@ -43,13 +46,15 @@ export function AiDraftReviewPanel({
     );
   }
 
-  return <AiDraftReviewContent draft={draft} run={run} />;
+  return <AiDraftReviewContent passageId={passageId} draft={draft} run={run} />;
 }
 
 function AiDraftReviewContent({
+  passageId,
   draft,
   run,
 }: {
+  passageId: string;
   draft: LogosPassageDraft;
   run: AiRunRow;
 }) {
@@ -201,6 +206,8 @@ function AiDraftReviewContent({
           Readable draft (not shown in canonical tabs): {readableLayer}
         </p>
       ) : null}
+
+      <PromoteDraftForm passageId={passageId} run={run} draft={draft} />
     </div>
   );
 }

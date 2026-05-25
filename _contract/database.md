@@ -71,4 +71,5 @@ Content tables carry indexes on:
 0006_commentary_grants.sql      grant select on commentary tables
 0007_seed_mvp_texts.sql         MVP seed data
 0009_ai_runs_insert.sql         ai_runs INSERT policy + grants (draft AI only)
+0010_editorial_promotion_grants.sql  selective promotion INSERT + ai_runs UPDATE
 ```

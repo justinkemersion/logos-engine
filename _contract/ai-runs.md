@@ -72,6 +72,21 @@ The Reading Desk **AI Draft** bottom tab renders the latest `passage_draft` JSON
 review. Content is labeled **AI Draft — not canonical**. Copy actions are provided; no
 promotion to translation or commentary tables occurs in the review slice.
 
+## Promotion workflow
+
+After review, operators may **selectively promote** items from a `passage_draft` into
+canonical tables via the Reading Desk. Promoted rows land with `status: draft` on
+translation layers (not auto-accepted). The source `ai_runs` row is marked `revised`.
+
+Promotable targets:
+
+- `translation_layers` (literal, readable, philosophical)
+- `translation_variants`
+- `commentary_notes`
+- `concept_mentions` (only when a matching `concept_threads` row exists)
+
+Not promoted in this slice: `tokens`, `cross_references`, new concept thread creation.
+
 ## What AI must not do
 
 - Author the final readable layer without review

@@ -20,6 +20,14 @@ export async function listAiRunsForPassage(
   );
 }
 
+export async function getAiRun(sub: string, id: string): Promise<AiRunRow | null> {
+  const rows = await fluxJson<AiRunRow[]>(
+    sub,
+    `/ai_runs?id=eq.${encodeURIComponent(id)}&limit=1`,
+  );
+  return rows[0] ?? null;
+}
+
 export async function getLatestAiRunForPassage(
   sub: string,
   passageId: string,
@@ -48,5 +56,24 @@ export async function createAiRun(
   if (!row) {
     throw new Error("Flux POST /ai_runs returned no row");
   }
+  return row;
+}
+
+export async function updateAiRunStatus(
+  sub: string,
+  id: string,
+  status: string,
+): Promise<AiRunRow> {
+  const rows = await fluxJson<AiRunRow[]>(
+    sub,
+    `/ai_runs?id=eq.${encodeURIComponent(id)}`,
+    {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify({ status }),
+    },
+  );
+  const row = rows[0];
+  if (!row) throw new Error("Flux PATCH /ai_runs returned no row");
   return row;
 }

@@ -117,6 +117,7 @@ export function ReadingDeskBottomPanel({
         ) : null}
         {bottomTab === "ai-draft" ? (
           <AiDraftReviewPanel
+            passageId={passage.id}
             draft={passageDraft}
             run={latestPassageDraftRun}
             parseError={draftParseError}

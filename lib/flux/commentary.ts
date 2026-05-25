@@ -27,3 +27,24 @@ export async function listFragments(sub: string): Promise<CommentaryNoteRow[]> {
     `/commentary_notes?note_type=eq.fragment&order=created_at.asc`,
   );
 }
+
+export type CreateCommentaryNoteInput = {
+  passage_id: string;
+  note_type: string;
+  title?: string | null;
+  body: string;
+};
+
+export async function createCommentaryNote(
+  sub: string,
+  input: CreateCommentaryNoteInput,
+): Promise<CommentaryNoteRow> {
+  const rows = await fluxJson<CommentaryNoteRow[]>(sub, "/commentary_notes", {
+    method: "POST",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify(input),
+  });
+  const row = rows[0];
+  if (!row) throw new Error("Flux POST /commentary_notes returned no row");
+  return row;
+}
