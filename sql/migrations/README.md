@@ -10,6 +10,7 @@ flux push sql/migrations/0004_translation_grants.sql
 flux push sql/migrations/0005_commentary_concepts_ai.sql
 flux push sql/migrations/0006_commentary_grants.sql
 flux push sql/migrations/0007_seed_mvp_texts.sql
+flux push sql/migrations/0009_ai_runs_insert.sql
 ```
 
 After pushing all migrations:
@@ -30,11 +31,13 @@ pnpm flux:doctor        # verifies gateway bridge and schema access
 | `0005_commentary_concepts_ai.sql` | `commentary_notes`, `concept_threads`, `concept_mentions`, `authenticity_profiles`, `ai_runs`, `cross_references` + RLS |
 | `0006_commentary_grants.sql` | `grant select` on commentary tables |
 | `0007_seed_mvp_texts.sql` | MVP seed: Homer (Odyssey 1.1, Iliad 1.1), Plato (Republic 327a) |
+| `0009_ai_runs_insert.sql` | `ai_runs` INSERT policy + grants (draft AI pipeline only) |
 
 ## RLS model
 
 All content tables use `for select to authenticated using (true)`. This is shared scholarly
 content — not per-user data. There are no `user_id` columns on content tables.
 
-Write access (INSERT/UPDATE/DELETE) is not granted in MVP. Future editorial tooling will
-add write policies in new numbered migrations.
+Write access (INSERT/UPDATE/DELETE) is not granted in MVP except **`ai_runs` INSERT**
+for draft AI output (`0009_ai_runs_insert.sql`). Future editorial tooling will add write
+policies for content promotion in new numbered migrations.

@@ -51,6 +51,7 @@ flux push sql/migrations/0004_translation_grants.sql
 flux push sql/migrations/0005_commentary_concepts_ai.sql
 flux push sql/migrations/0006_commentary_grants.sql
 flux push sql/migrations/0007_seed_mvp_texts.sql
+flux push sql/migrations/0009_ai_runs_insert.sql
 pnpm flux:schema:sync
 pnpm flux:doctor
 pnpm dev
@@ -77,14 +78,27 @@ The reading desk (`/passages/[id]`) shows:
 - **Left rail:** hierarchical library (Plato, Homer, etc.)
 - **Center:** Greek text tokenized with literal glosses; tab to literal / readable / commentary
 - **Token click:** inline inspector with lemma, morphology, gloss, variants and tradeoff notes
-- **Bottom panel:** grammar / notes / variants
+- **Bottom panel:** grammar / notes / variants; **Generate Draft** button (disabled until UI gate)
 - **Right panel:** readable English, philosophical notes, cross references, authenticity & transmission, related concepts
 
-## Scripts
+## AI draft pipeline
+
+The `logos-passage-agent` generates validated structured JSON (`LogosPassageDraft`). Persistence
+stores drafts in `ai_runs` only — **not** in canonical translation tables.
+
+```bash
+# Optional: set CURSOR_API_KEY in .env, then:
+pnpm agent:passage -- --work-title="Odyssey" --citation="1.1" \
+  --author="Homer" --greek="ἄνδρα μοι ἔννεπε, Μοῦσα, πολύτροπον" \
+  --out=draft.json
+```
+
+Promotion to `translation_layers`, `tokens`, etc. is future editorial work. See
+[`_contract/ai-runs.md`](_contract/ai-runs.md).
 
 | Command | Purpose |
 |---------|---------|
-| `pnpm dev` | Start dev server |
+| `pnpm agent:passage` | Run passage agent CLI (requires `CURSOR_API_KEY`) |
 | `pnpm flux:doctor` | Verify Flux gateway bridge |
 | `pnpm foundry:doctor` | Full app + env preflight |
 | `pnpm foundry:verify` | Lint, typecheck, test, drift, build |

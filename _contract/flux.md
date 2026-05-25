@@ -28,9 +28,10 @@ Do not call `fetch()` against `FLUX_URL` anywhere else (enforced by Vitest).
 
 Domain read helpers live in `lib/flux/<resource>.ts` and call `fluxJson` only.
 
-Logos Engine content is read-only from the application layer. Seeding happens via
-`sql/migrations/0007_seed_mvp_texts.sql`. There are no create/update server actions for
-content tables in the MVP.
+Logos Engine content is read-only from the application layer except **`ai_runs` INSERT**
+for draft AI pipeline output. Seeding happens via `sql/migrations/0007_seed_mvp_texts.sql`.
+No writes to `tokens`, `translation_layers`, `commentary_notes`, or `cross_references` until
+explicit editorial promotion.
 
 ## Errors
 

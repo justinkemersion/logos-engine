@@ -7,6 +7,7 @@ import { listTranslationLayers, listTranslationVariants } from "@/lib/flux/trans
 import { listCommentaryNotes, listConceptMentions } from "@/lib/flux/commentary";
 import { listConcepts } from "@/lib/flux/concepts";
 import { listCrossReferences } from "@/lib/flux/cross-references";
+import { getLatestAiRunForPassage } from "@/lib/flux/ai-runs";
 import { ReadingDesk } from "@/components/reading/ReadingDesk";
 import type {
   WorkRow,
@@ -19,6 +20,7 @@ import type {
   AuthenticityProfileRow,
   CrossReferenceRow,
   PassageRow,
+  AiRunRow,
 } from "@/lib/types/entities";
 
 async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
@@ -48,6 +50,7 @@ export default async function PassagePage({ params }: { params: Promise<{ id: st
     authenticity,
     crossRefs,
     workPassages,
+    latestPassageDraftRun,
   ]: [
     WorkRow | null,
     TokenRow[],
@@ -59,6 +62,7 @@ export default async function PassagePage({ params }: { params: Promise<{ id: st
     AuthenticityProfileRow | null,
     CrossReferenceRow[],
     PassageRow[],
+    AiRunRow | null,
   ] = await Promise.all([
     safe(() => getWork(sub, passage.work_id), null),
     safe(() => listTokensForPassage(sub, passage.id), []),
@@ -70,6 +74,7 @@ export default async function PassagePage({ params }: { params: Promise<{ id: st
     safe(() => getAuthenticity(sub, passage.work_id), null),
     safe(() => listCrossReferences(sub, passage.id), []),
     safe(() => listPassagesByWork(sub, passage.work_id), []),
+    safe(() => getLatestAiRunForPassage(sub, passage.id, "passage_draft"), null),
   ]);
 
   const fallbackWork: WorkRow = {
@@ -108,6 +113,7 @@ export default async function PassagePage({ params }: { params: Promise<{ id: st
       authenticity={authenticity}
       crossRefs={crossRefs}
       passageMap={passageMap}
+      latestPassageDraftRun={latestPassageDraftRun}
     />
   );
 }

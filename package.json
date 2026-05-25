@@ -7,6 +7,9 @@
     "node": ">=20",
     "pnpm": ">=9"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["sqlite3"]
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
@@ -31,9 +34,11 @@
     "foundry:verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm check:drift && pnpm build",
     "foundry:verify:template": "tsx scripts/foundry-verify-template.ts",
     "flux:schema:sync": "tsx scripts/flux-schema-sync.ts",
-    "flux:doctor": "tsx scripts/flux-doctor.ts"
+    "flux:doctor": "tsx scripts/flux-doctor.ts",
+    "agent:passage": "tsx scripts/logos-passage-agent.ts"
   },
   "dependencies": {
+    "@cursor/sdk": "^1.0.13",
     "jose": "^6.2.3",
     "next": "15.5.15",
     "next-auth": "5.0.0-beta.31",

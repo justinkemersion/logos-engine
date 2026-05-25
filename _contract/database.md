@@ -21,10 +21,15 @@ create policy <table>_select on <table>
 There is no `user_id` column on content tables. The JWT `sub` is used to authenticate the
 reader but does not scope rows.
 
-**No INSERT/UPDATE/DELETE via the application layer in MVP.** Content is seeded via
-migrations. Future editorial tooling will add write policies.
+**No INSERT/UPDATE/DELETE via the application layer in MVP** except `ai_runs` INSERT for
+draft AI pipeline output (`0009_ai_runs_insert.sql`). Content is seeded via migrations.
+No writes to editorial content tables until explicit promotion.
 
-## Migrations
+## RLS invariant
+
+All content tables use `for select to authenticated using (true)`. Draft AI output may be
+inserted into `ai_runs` only (`ai_runs_insert` policy). No other content table accepts
+application writes in the current slice.
 
 - Numbered files: `0001_*.sql`, `0002_*_grants.sql`, domain DDL, `*_grants.sql`
 - Use **unqualified** table names; Flux applies in the API schema context (`t_<hash>_api`)
@@ -39,7 +44,8 @@ Every DDL migration has a paired `*_grants.sql`:
 grant select on table works, sections, passages, tokens, source_editions to authenticated;
 ```
 
-`select` only — no `insert`, `update`, `delete` until editorial write mode is planned.
+`select` only on editorial content tables — no `insert`, `update`, `delete` until editorial
+promotion is planned. Exception: `grant insert on ai_runs` for draft AI runs (`0009`).
 
 ## Primary keys
 
@@ -64,4 +70,5 @@ Content tables carry indexes on:
                                   authenticity_profiles, ai_runs, cross_references + RLS
 0006_commentary_grants.sql      grant select on commentary tables
 0007_seed_mvp_texts.sql         MVP seed data
+0009_ai_runs_insert.sql         ai_runs INSERT policy + grants (draft AI only)
 ```

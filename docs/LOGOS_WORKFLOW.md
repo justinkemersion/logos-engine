@@ -25,6 +25,7 @@ flux push sql/migrations/0004_translation_grants.sql
 flux push sql/migrations/0005_commentary_concepts_ai.sql
 flux push sql/migrations/0006_commentary_grants.sql
 flux push sql/migrations/0007_seed_mvp_texts.sql
+flux push sql/migrations/0009_ai_runs_insert.sql
 
 # Sync schema name to .env.local
 pnpm flux:schema:sync
@@ -64,6 +65,31 @@ All content tables use `for select to authenticated using (true)` RLS. There are
 `user_id` columns on content tables — this is shared scholarly content.
 
 See `sql/migrations/README.md` for the full migration map.
+
+## AI draft runs
+
+The `logos-passage-agent` (see `prompts/logos-passage-agent.md`) produces validated
+`LogosPassageDraft` JSON. Persistence writes **`ai_runs` only** with `run_type = passage_draft`.
+Drafts are not canonical content until editorial promotion (future work).
+
+```bash
+# Requires CURSOR_API_KEY in .env
+pnpm agent:passage -- --work-title="Odyssey" --citation="1.1" \
+  --author="Homer" --greek="ἄνδρα μοι ἔννεπε, Μοῦσα, πολύτροπον" \
+  --out=draft.json
+```
+
+The Reading Desk **Generate Draft** button stays disabled until
+`LOGOS_PASSAGE_DRAFT_UI_ENABLED=1` after reviewing persisted drafts. The server action
+`generatePassageDraftAction` is wired for programmatic use.
+
+Optional env:
+
+| Variable | Purpose |
+|----------|---------|
+| `CURSOR_API_KEY` | Cursor SDK auth for agent CLI / server action |
+| `LOGOS_PASSAGE_DRAFT_UI_ENABLED=1` | Enable Reading Desk generate button |
+| `LOGOS_PASSAGE_AGENT_DECOMPOSE=1` | Also persist granular `ai_runs` rows |
 
 ## Checking for drift
 
