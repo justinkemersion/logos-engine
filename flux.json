@@ -1,4 +1,7 @@
 {
   "slug": "logos-engine",
-  "hash": "REPLACE_AFTER_FLUX_INIT"
+  "hash": "92a6ed8",
+  "apiUrl": "https://api--logos-engine--92a6ed8.vsl-base.com",
+  "mode": "v2_shared",
+  "apiSchema": "t_744b22df8382_api"
 }

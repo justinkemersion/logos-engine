@@ -23,13 +23,13 @@ export default function LandingPage() {
         </p>
         <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Link
-            href="/login"
+            href="/passages/00000000-0000-0000-0002-000000000001"
             className="rounded-md bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-[var(--accent-fg)] transition hover:opacity-90"
           >
             Explore Odyssey 1.1
           </Link>
           <Link
-            href="/login"
+            href="/concepts"
             className="rounded-md border border-[var(--border)] bg-[var(--surface)] px-5 py-2.5 text-sm font-medium transition hover:bg-[var(--muted)]"
           >
             View Translation Rules
