@@ -44,7 +44,22 @@
     "agent:passage:import": "tsx scripts/import-passage-draft.ts",
     "agent:passage:import:odyssey-1-1": "pnpm agent:passage:import -- --passage-id=00000000-0000-0000-0002-000000000001 --work-title=Odyssey --citation=1.1 --decompose",
     "agent:passage:import:iliad-1-1": "pnpm agent:passage:import -- --passage-id=00000000-0000-0000-0002-000000000002 --work-title=Iliad --citation=1.1 --decompose",
-    "agent:passage:import:republic-327a": "pnpm agent:passage:import -- --passage-id=00000000-0000-0000-0002-000000000003 --work-title=Republic --citation=327a --decompose"
+    "agent:passage:import:republic-327a": "pnpm agent:passage:import -- --passage-id=00000000-0000-0000-0002-000000000003 --work-title=Republic --citation=327a --decompose",
+    "corpus:render": "tsx scripts/corpus-render.ts",
+    "corpus:generate": "tsx scripts/corpus-generate.ts",
+    "corpus:render:odyssey-1-1": "pnpm corpus:render -- --work-slug=odyssey --citation=1.1",
+    "corpus:generate:odyssey-1-1": "pnpm corpus:generate -- --work-slug=odyssey --citation=1.1",
+    "corpus:generate:odyssey-book-1": "pnpm corpus:generate -- --work-slug=odyssey --section=book-1",
+    "corpus:render:odyssey-book-1": "pnpm corpus:render -- --work-slug=odyssey --section=book-1",
+    "corpus:sync:perseus": "tsx scripts/corpus-sync-perseus.ts",
+    "corpus:sync:republic-book-1": "pnpm corpus:sync:perseus -- republic-book-1",
+    "corpus:sync:odyssey-book-1": "pnpm corpus:sync:perseus -- odyssey-book-1",
+    "corpus:sync:iliad-book-1": "pnpm corpus:sync:perseus -- iliad-book-1",
+    "corpus:generate-batch": "tsx scripts/corpus-generate-batch.ts",
+    "corpus:generate:odyssey-book-1-batch": "pnpm corpus:generate-batch -- --work-slug=odyssey --section=book-1",
+    "corpus:generate:iliad-book-1-batch": "pnpm corpus:generate-batch -- --work-slug=iliad --section=book-1",
+    "corpus:status": "tsx scripts/corpus-status.ts",
+    "corpus:generate:republic-book-1": "bash scripts/corpus-generate-republic-book-1.sh"
   },
   "dependencies": {
     "@cursor/sdk": "^1.0.13",
@@ -56,6 +71,7 @@
     "react-markdown": "^10.1.0",
     "server-only": "^0.0.1",
     "undici": "^8.3.0",
+    "yaml": "^2.9.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

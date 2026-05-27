@@ -37,6 +37,7 @@ yarn-error.log*
 # local plans and agent artifacts (not committed)
 .local/
 # agent CLI output: .local/agent-drafts/{work}/{citation}.json
+# corpus garden: .local/corpus/{drafts,garden,exports}/
 
 # dependency report artifacts (CI uploads these)
 .local/deps-reports/

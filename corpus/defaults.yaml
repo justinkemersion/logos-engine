@@ -1,0 +1,6 @@
+# Global defaults for all section manifests.
+# Per-passage overrides are supported in section manifest rows.
+
+prompt_version: v1
+generation_profile: standard
+agent_profile: logos-passage-agent

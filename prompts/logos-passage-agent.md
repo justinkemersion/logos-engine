@@ -122,9 +122,21 @@ Examples:
 
 Do not emit empty or boilerplate warnings.
 
+## Long passages
+
+When the Greek passage is long (roughly 150+ words), you must still return **complete valid JSON**
+in this response. Never refuse, summarize in prose, or point to external files.
+
+- Emit `translationLayers`, `variants`, `commentary`, and `editorialWarnings` for the full passage.
+- For `tokens`: include every word when the passage is short; when long, include at minimum all
+  words in the densest argumentative span, plus any form of λόγος, ψυχή, ἀρετή, δικαιοσύνη,
+  ὅσιον, δίκαιον, or other concept terms in the passage.
+- Keep `commentary` and `tradeoffNote` concise so the JSON fits one response.
+
 ## Output format
 
 Respond with **JSON only**. No prose before or after. No markdown fences. No apologies.
+Never write shell commands, file paths, or instructions to the operator instead of JSON.
 
 Schema:
 

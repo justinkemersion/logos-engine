@@ -132,6 +132,35 @@ the Reading Desk supports selective **promotion** (idempotent, with `source_ai_r
 provenance) and **review** (mark reviewed / return to draft) on promoted canonical rows.
 Concept mentions require an existing `concept_threads` row.
 
+## Corpus Garden
+
+Local markdown corpus for generation and curation — **no Flux writes**.
+
+See [`corpus/README.md`](../corpus/README.md) and [`corpus/BULK-WEEKEND.md`](../corpus/BULK-WEEKEND.md).
+
+```bash
+pnpm corpus:sync:odyssey-book-1
+pnpm corpus:sync:iliad-book-1
+pnpm corpus:generate:odyssey-book-1-batch   # resumable; see .local/corpus/*.log
+pnpm corpus:generate:iliad-book-1-batch
+pnpm corpus:status
+```
+
+```bash
+# Render markdown from existing JSON (legacy .local/agent-drafts/ supported)
+pnpm corpus:render:odyssey-1-1
+pnpm corpus:render -- --work-slug=odyssey --section=book-1
+pnpm corpus:render -- --all --author-slug=homer
+
+# Generate JSON + markdown (requires CURSOR_API_KEY)
+pnpm corpus:generate:odyssey-1-1
+pnpm corpus:generate -- --work-slug=odyssey --citation=1.1 --force
+```
+
+Committed inventory: `corpus/defaults.yaml` plus section manifests under
+`corpus/{author}/{work}/{section}/manifest.yaml`. Generated output: `.local/corpus/drafts/`
+and `.local/corpus/garden/`. Future import into `ai_runs` is planned but not implemented.
+
 ### Manual verification (promotion + review)
 
 1. Generate/persist an Odyssey 1.1 draft (`generatePassageDraftAction` or CLI).

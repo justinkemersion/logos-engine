@@ -111,6 +111,10 @@ Push migrations through `0011_promotion_provenance.sql` for review actions and p
 | `pnpm agent:passage:import:odyssey-1-1` | Import Odyssey 1.1 draft for MVP passage |
 | `pnpm agent:passage:import:iliad-1-1` | Import Iliad 1.1 draft for MVP passage |
 | `pnpm agent:passage:import:republic-327a` | Import Republic 327a draft for MVP passage |
+| `pnpm corpus:render` | Render garden markdown from local JSON drafts |
+| `pnpm corpus:render:odyssey-1-1` | Render Odyssey 1.1 garden file |
+| `pnpm corpus:generate` | Generate JSON + garden markdown from manifest |
+| `pnpm corpus:generate:odyssey-1-1` | Generate Odyssey 1.1 draft + garden file |
 | `pnpm flux:doctor` | Verify Flux gateway bridge |
 | `pnpm foundry:doctor` | Full app + env preflight |
 | `pnpm foundry:verify` | Lint, typecheck, test, drift, build |
