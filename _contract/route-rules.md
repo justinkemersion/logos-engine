@@ -8,8 +8,9 @@
 
 ## Auth
 
-- Public: `/`, `/login`
-- Protected: `app/(app)/**` — layout calls `auth()` and redirects to `/login`
+- Public: `/`, `/login`, `/read`, `/read/**` — use `fluxAnon()` only (see `_contract/public-reader.md`)
+- Protected workspace: `app/(workspace)/**` — layout calls `auth()` and redirects to `/login`
+- Protected editorial: `app/(app)/**` — layout calls `auth()` and redirects to `/login`
 
 ## Routes
 
@@ -17,6 +18,10 @@
 |------|---------|
 | `/` | Landing page (public) |
 | `/login` | Sign-in |
+| `/read` | Public library |
+| `/read/[passageId]` | Public passage reader |
+| `/workspace` | Personal workspace dashboard |
+| `/workspace/passages/[id]` | Workspace passage reader/editor |
 | `/works` | Work library |
 | `/works/[slug]` | Work overview + passage list |
 | `/passages/[id]` | Reading desk |

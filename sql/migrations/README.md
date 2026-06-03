@@ -13,6 +13,11 @@ flux push sql/migrations/0007_seed_mvp_texts.sql
 flux push sql/migrations/0009_ai_runs_insert.sql
 flux push sql/migrations/0010_editorial_promotion_grants.sql
 flux push sql/migrations/0011_promotion_provenance.sql
+flux push sql/migrations/0012_seed_reading_desk_test_passages.sql
+flux push sql/migrations/0013_public_read_anon.sql
+flux push sql/migrations/0013_public_read_grants.sql
+flux push sql/migrations/0014_workspaces_private_overlays.sql
+flux push sql/migrations/0014_workspaces_grants.sql
 ```
 
 After pushing all migrations:
@@ -20,6 +25,7 @@ After pushing all migrations:
 ```bash
 pnpm flux:schema:sync   # writes FLUX_POSTGREST_SCHEMA to .env.local
 pnpm flux:doctor        # verifies gateway bridge and schema access
+pnpm public:probe       # verifies anon public-read policies
 ```
 
 ## Migration map
@@ -36,11 +42,19 @@ pnpm flux:doctor        # verifies gateway bridge and schema access
 | `0009_ai_runs_insert.sql` | `ai_runs` INSERT policy + grants (draft AI pipeline only) |
 | `0010_editorial_promotion_grants.sql` | INSERT on canonical tables + `ai_runs` UPDATE (selective promotion) |
 | `0011_promotion_provenance.sql` | Provenance + review audit columns, partial unique indexes, UPDATE grants (review actions) |
+| `0012_seed_reading_desk_test_passages.sql` | Extra passages: Iliad 1.2, 1.10, 1.33, 1.60; Odyssey 1.2, 1.5 |
+| `0013_public_read_anon.sql` | Restrictive `anon` SELECT policies + seed `review_status` backfill |
+| `0013_public_read_grants.sql` | `grant select` to `anon` on public-safe tables |
+| `0014_workspaces_private_overlays.sql` | `workspaces`, `workspace_*` overlay tables + parent-scoped RLS |
+| `0014_workspaces_grants.sql` | Authenticated CRUD on workspace tables (no anon) |
 
 ## RLS model
 
-All content tables use `for select to authenticated using (true)`. This is shared scholarly
-content — not per-user data. There are no `user_id` columns on content tables.
+Canonical content tables use `for select to authenticated using (true)` for editorial access.
+Public reader adds parallel `for select to anon` policies with restrictive `using` clauses
+(see `0013_public_read_anon.sql`). Workspace tables scope ownership via `workspaces.owner_sub`.
+
+Shared scholarly content has no `user_id` on canonical tables.
 
 Write access (INSERT/UPDATE/DELETE) is not granted in MVP except **`ai_runs` INSERT**
 for draft AI output (`0009_ai_runs_insert.sql`), **selective editorial promotion**

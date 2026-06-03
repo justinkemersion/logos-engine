@@ -52,21 +52,41 @@ flux push sql/migrations/0005_commentary_concepts_ai.sql
 flux push sql/migrations/0006_commentary_grants.sql
 flux push sql/migrations/0007_seed_mvp_texts.sql
 flux push sql/migrations/0009_ai_runs_insert.sql
+flux push sql/migrations/0010_editorial_promotion_grants.sql
+flux push sql/migrations/0011_promotion_provenance.sql
+flux push sql/migrations/0012_seed_reading_desk_test_passages.sql
+flux push sql/migrations/0013_public_read_anon.sql
+flux push sql/migrations/0013_public_read_grants.sql
+flux push sql/migrations/0014_workspaces_private_overlays.sql
+flux push sql/migrations/0014_workspaces_grants.sql
 pnpm flux:schema:sync
 pnpm flux:doctor
+pnpm public:probe
 pnpm dev
 ```
 
 Full guide: [`docs/LOGOS_WORKFLOW.md`](docs/LOGOS_WORKFLOW.md)
+
+## Product modes
+
+| Mode | Route | Access |
+|------|-------|--------|
+| Public reader | `/read`, `/read/[passageId]` | Anonymous; accepted/reviewed canonical content |
+| Personal workspace | `/workspace`, `/workspace/passages/[id]` | Sign in; private overlays on shared passages |
+| Site editorial | `/passages/[id]` | Sign in; AI draft, promotion, review |
 
 ## Routes
 
 | Route | Purpose |
 |-------|---------|
 | `/` | Landing page (public) |
-| `/works` | Work library |
+| `/read` | Public library |
+| `/read/[passageId]` | Public passage reader |
+| `/workspace` | Personal workspace dashboard |
+| `/workspace/passages/[id]` | Workspace reader / editor |
+| `/works` | Editorial work library |
 | `/works/[slug]` | Work overview + passage list |
-| `/passages/[id]` | Reading desk |
+| `/passages/[id]` | Editorial reading desk |
 | `/concepts` | Concept index |
 | `/concepts/[slug]` | Concept detail + semantic trail |
 | `/fragments` | Fragment cards |

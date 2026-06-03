@@ -4,7 +4,10 @@ Platform setup order and gateway bridge rules: **`_contract/flux-workflow.md`**.
 
 ## HTTP boundary
 
-All Flux / PostgREST HTTP must go through `lib/flux/client.ts` → `fluxJson(sub, path, init)`.
+All Flux / PostgREST HTTP must go through `lib/flux/client.ts`:
+
+- `fluxJson(sub, path, init)` — authenticated editorial and workspace reads/writes
+- `fluxAnon(path, init)` — public reader only (`role: anon`)
 
 Do not call `fetch()` against `FLUX_URL` anywhere else (enforced by Vitest).
 

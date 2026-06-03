@@ -28,13 +28,27 @@ flux push sql/migrations/0007_seed_mvp_texts.sql
 flux push sql/migrations/0009_ai_runs_insert.sql
 flux push sql/migrations/0010_editorial_promotion_grants.sql
 flux push sql/migrations/0011_promotion_provenance.sql
+flux push sql/migrations/0012_seed_reading_desk_test_passages.sql
+flux push sql/migrations/0013_public_read_anon.sql
+flux push sql/migrations/0013_public_read_grants.sql
+flux push sql/migrations/0014_workspaces_private_overlays.sql
+flux push sql/migrations/0014_workspaces_grants.sql
 
 # Sync schema name to .env.local
 pnpm flux:schema:sync
 
-# Verify gateway bridge
+# Verify gateway bridge and anon public read
 pnpm flux:doctor
+pnpm public:probe
 ```
+
+## Product modes
+
+| Mode | Route | Data access |
+|------|-------|-------------|
+| Public reader | `/read/**` | `fluxAnon()` only — accepted layers, reviewed variants/commentary |
+| Personal workspace | `/workspace/**` | `fluxJson(sub)` — `workspace_*` overlays; never mutates canonical tables |
+| Site editorial | `/passages/[id]` | Full authenticated reads + AI draft / promotion / review |
 
 ## Running the app
 
@@ -42,7 +56,13 @@ pnpm flux:doctor
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Sign in, then navigate to `/works` to see the library.
+Open [http://localhost:3000](http://localhost:3000).
+
+**Public (no login):** `/read` or `/read/00000000-0000-0000-0002-000000000001` (Odyssey 1.1).
+
+**Editorial (sign in):** `/works` and `/passages/<id>` for the full reading desk with AI draft workflow.
+
+**Workspace (sign in):** `/workspace` for a private interpretive layer over shared passages.
 
 ## Exploring the MVP
 
@@ -50,6 +70,9 @@ After setup, the following passages are available:
 
 | Path | Passage |
 |------|---------|
+| `/read` | Public library (anonymous) |
+| `/read/<passage-id>` | Public reader |
+| `/workspace` | Personal workspace |
 | `/works/odyssey` | Homer, Odyssey — passage list |
 | `/works/iliad` | Homer, Iliad — passage list |
 | `/works/republic` | Plato, Republic — passage list |
@@ -160,6 +183,22 @@ pnpm corpus:generate -- --work-slug=odyssey --citation=1.1 --force
 Committed inventory: `corpus/defaults.yaml` plus section manifests under
 `corpus/{author}/{work}/{section}/manifest.yaml`. Generated output: `.local/corpus/drafts/`
 and `.local/corpus/garden/`. Future import into `ai_runs` is planned but not implemented.
+
+### Reading Desk test passages (migration 0012)
+
+After `0012_seed_reading_desk_test_passages.sql`, each work has multiple passages on the work
+page. Import corpus JSON into `ai_runs` for the AI Draft tab:
+
+```bash
+pnpm agent:passage:import:iliad-1-2
+pnpm agent:passage:import:iliad-1-10
+pnpm agent:passage:import:iliad-1-33
+pnpm agent:passage:import:iliad-1-60
+pnpm agent:passage:import:odyssey-1-2
+pnpm agent:passage:import:odyssey-1-5
+```
+
+Uses `.local/corpus/drafts/homer/{work}/{citation}.json` from the weekend batch.
 
 ### Manual verification (promotion + review)
 

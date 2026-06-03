@@ -11,6 +11,17 @@ outward — not from English inward.
 A serious reader who wants to engage with the Greek world on its own terms: scholars,
 students, and educated generalists who know that translations are interpretations.
 
+## Product modes
+
+| Mode | Route | Audience |
+|------|-------|----------|
+| Public Reader | `/read/**` | Anonymous; accepted/reviewed canonical content only |
+| Personal Workspace | `/workspace/**` | Logged-in; private overlays on shared passages |
+| Site Editorial | `/passages/[id]`, promotion/review | Maintains public canonical content |
+
+A user workspace is **not** a physical clone of the corpus. It is a private interpretive layer
+referencing shared `passage_id` rows.
+
 ## Non-goals
 
 - Not a chatbot interface for "explain Plato to me"

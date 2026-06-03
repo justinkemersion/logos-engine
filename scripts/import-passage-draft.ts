@@ -5,11 +5,12 @@
  * Usage:
  *   pnpm agent:passage:import -- --passage-id=<uuid> --work-title=Odyssey --citation=1.1
  *
- * Reads from `.local/agent-drafts/{work}/{citation}.json` by default, or --file=path.
+ * Reads from corpus drafts, legacy agent-drafts, --file=, or --work-title + --citation.
  */
 import { readFileSync } from "node:fs";
 import { loadEnvFiles } from "./lib/load-env";
 import { defaultAgentDraftPath } from "@/lib/agents/agent-draft-path";
+import { resolveAgentDraftPath } from "@/lib/corpus/garden-path";
 import { parsePassageDraftOutput } from "@/lib/agents/parse-passage-draft-output";
 import { persistPassageDraftToAiRuns } from "@/lib/agents/persist-passage-draft-core";
 
@@ -51,6 +52,8 @@ function parseArgs(argv: string[]): {
   let filePath: string | undefined;
   let workTitle: string | undefined;
   let citation: string | undefined;
+  let authorSlug: string | undefined;
+  let workSlug: string | undefined;
   let decompose = false;
   let sub = process.env.LOGOS_FLUX_SUB?.trim() || DEFAULT_SUB;
   let model: string | undefined;
@@ -77,6 +80,14 @@ function parseArgs(argv: string[]): {
       citation = arg.slice("--citation=".length);
       continue;
     }
+    if (arg.startsWith("--author-slug=")) {
+      authorSlug = arg.slice("--author-slug=".length);
+      continue;
+    }
+    if (arg.startsWith("--work-slug=")) {
+      workSlug = arg.slice("--work-slug=".length);
+      continue;
+    }
     if (arg.startsWith("--sub=")) {
       sub = arg.slice("--sub=".length);
       continue;
@@ -98,11 +109,27 @@ function parseArgs(argv: string[]): {
   }
 
   if (!filePath) {
-    if (!workTitle || !citation) {
-      console.error("Provide --file= or both --work-title= and --citation= for default path.");
+    if (authorSlug && workSlug && citation) {
+      const resolved = resolveAgentDraftPath({
+        author_slug: authorSlug,
+        work_slug: workSlug,
+        citation,
+      });
+      if (!resolved) {
+        console.error(
+          `No corpus draft for ${authorSlug}/${workSlug} ${citation} (.local/corpus/drafts/ or agent-drafts/)`,
+        );
+        process.exit(1);
+      }
+      filePath = resolved;
+    } else if (workTitle && citation) {
+      filePath = defaultAgentDraftPath({ workTitle, citation });
+    } else {
+      console.error(
+        "Provide --file=, --author-slug + --work-slug + --citation, or --work-title + --citation.",
+      );
       usage();
     }
-    filePath = defaultAgentDraftPath({ workTitle, citation });
   }
 
   return { passageId, filePath, decompose, sub, model, prompt };

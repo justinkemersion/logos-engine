@@ -18,3 +18,14 @@ export async function mintFluxJwt(sub: string): Promise<string> {
     .setExpirationTime("15m")
     .sign(secret);
 }
+
+/** HS256 JWT for anonymous public reader (`role: anon`). */
+export async function mintFluxJwtAnon(): Promise<string> {
+  const secret = getSecretBytes();
+  return new SignJWT({ role: "anon" })
+    .setProtectedHeader({ alg: "HS256" })
+    .setSubject("public-reader")
+    .setIssuedAt()
+    .setExpirationTime("15m")
+    .sign(secret);
+}

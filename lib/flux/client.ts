@@ -1,5 +1,5 @@
 import { Agent } from "undici";
-import { mintFluxJwt } from "./jwt";
+import { mintFluxJwt, mintFluxJwtAnon } from "./jwt";
 
 let fluxInsecureAgent: Agent | undefined;
 
@@ -66,6 +66,37 @@ export async function fluxJson<T>(
   init: RequestInit = {},
 ): Promise<T> {
   const token = await mintFluxJwt(sub);
+  const url = `${baseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+  const headers = new Headers(init.headers);
+  headers.set("Authorization", `Bearer ${token}`);
+  if (init.body != null && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+  applyPostgrestSchemaHeaders(headers, init);
+  const res = await fetch(url, {
+    ...init,
+    headers,
+    ...fluxFetchOptions(),
+  } as RequestInit);
+  const text = await res.text();
+  if (!res.ok) {
+    const detail =
+      text.length > 0 && text.length < 400 ? text : text ? `${text.slice(0, 400)}…` : "";
+    throw new FluxHttpError(
+      detail ? `Flux ${res.status} ${path}: ${detail}` : `Flux ${res.status} ${path}`,
+      res.status,
+      text,
+    );
+  }
+  if (!text) {
+    return undefined as T;
+  }
+  return JSON.parse(text) as T;
+}
+
+/** Public reader HTTP boundary — uses `role: anon` JWT only. Never use for authenticated editorial/workspace reads. */
+export async function fluxAnon<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const token = await mintFluxJwtAnon();
   const url = `${baseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
   const headers = new Headers(init.headers);
   headers.set("Authorization", `Bearer ${token}`);

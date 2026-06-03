@@ -4,6 +4,12 @@
 
 AI output is draft material. It is never presented as final scholarly authority.
 
+**Public reader:** `ai_runs` are not exposed to anonymous `fluxAnon()` access.
+
+**Personal workspace:** User-scoped AI drafts are future work (`workspace_ai_runs` or similar).
+User drafts must never enter the site canonical promotion flow. Public canonical promotion
+remains site-editorial only (`/passages/[id]`).
+
 The Greek source remains the authority. AI assists the editorial process; it does not replace it.
 
 ## Run types

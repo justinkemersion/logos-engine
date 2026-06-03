@@ -11,12 +11,19 @@ Logos Engine content tables (`works`, `sections`, `passages`, `tokens`, `transla
 `authenticity_profiles`, `ai_runs`, `cross_references`, `source_editions`) are **shared
 scholarly content** — not per-user data.
 
-RLS policy for all content tables:
+RLS policy for canonical content tables (editorial / authenticated readers):
 
 ```sql
 create policy <table>_select on <table>
   for select to authenticated using (true);
 ```
+
+Public reader uses **separate** `for select to anon` policies (see `0013_public_read_anon.sql`).
+Anon policies are restrictive — e.g. `translation_layers`: `status = 'accepted'` only.
+Do not serve public pages with `fluxJson` and authenticated JWT.
+
+Workspace tables (`0014_*`) use `owner_sub` on `workspaces` only; child tables check ownership
+via `exists (select 1 from workspaces where ...)`.
 
 There is no `user_id` column on content tables. The JWT `sub` is used to authenticate the
 reader but does not scope rows.
