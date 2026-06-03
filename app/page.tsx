@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ODYSSEY_1_1_PASSAGE_ID } from "@/lib/public/passages";
+import { ODYSSEY_1_1_HREF } from "@/lib/public/routes";
 
 const btnPrimary =
   "inline-flex items-center justify-center rounded-md px-5 py-2.5 text-sm font-medium transition bg-[var(--accent)] text-[var(--accent-fg)] hover:opacity-90";
@@ -29,7 +29,7 @@ export default function LandingPage() {
           <Link href="/read" className={btnPrimary}>
             Start Reading
           </Link>
-          <Link href={`/read/${ODYSSEY_1_1_PASSAGE_ID}`} className={btnSecondary}>
+          <Link href={ODYSSEY_1_1_HREF} className={btnSecondary}>
             Explore Odyssey 1.1
           </Link>
           <Link href="/login?callbackUrl=/workspace" className={btnSecondary}>

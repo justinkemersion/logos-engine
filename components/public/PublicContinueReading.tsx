@@ -1,5 +1,6 @@
 import Link from "next/link";
-import type { PassageRow } from "@/lib/types/entities";
+import { publicPassageHref } from "@/lib/public/routes";
+import type { PassageRow, WorkRow } from "@/lib/types/entities";
 
 function firstSentence(text: string, maxLen = 80): string {
   const match = text.match(/^[^.!?]+[.!?]?/);
@@ -8,11 +9,11 @@ function firstSentence(text: string, maxLen = 80): string {
 }
 
 export function PublicContinueReading({
-  workTitle,
+  work,
   passage,
   siblings,
 }: {
-  workTitle: string;
+  work: WorkRow;
   passage: PassageRow;
   siblings: PassageRow[];
 }) {
@@ -32,20 +33,20 @@ export function PublicContinueReading({
       <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {prev ? (
           <Link
-            href={`/read/${prev.id}`}
+            href={publicPassageHref(work, prev)}
             className="text-sm text-[var(--muted-fg)] transition hover:text-[var(--foreground)]"
           >
-            ← {workTitle} {prev.citation_ref}
+            ← {work.title} {prev.citation_ref}
           </Link>
         ) : (
           <span />
         )}
         {next ? (
           <Link
-            href={`/read/${next.id}`}
+            href={publicPassageHref(work, next)}
             className="text-sm text-[var(--accent)] transition hover:opacity-80 sm:text-right"
           >
-            Next: {workTitle} {next.citation_ref}
+            Next: {work.title} {next.citation_ref}
             {next.source_note ? ` — ${firstSentence(next.source_note)}` : ""} →
           </Link>
         ) : null}

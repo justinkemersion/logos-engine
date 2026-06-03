@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/ui/cn";
+import { publicPassageHref } from "@/lib/public/routes";
 import type { PassageRow, WorkRow } from "@/lib/types/entities";
 
 const buttonPrimary =
@@ -37,7 +38,7 @@ export function PublicWorkCard({
           </p>
         </div>
         {firstPassage ? (
-          <Link href={`/read/${firstPassage.id}`} className={cn(buttonPrimary, "shrink-0")}>
+          <Link href={publicPassageHref(work, firstPassage)} className={cn(buttonPrimary, "shrink-0")}>
             Open
           </Link>
         ) : null}
@@ -63,7 +64,7 @@ export function PublicWorkCard({
           {visibleCitations.map((p) => (
             <li key={p.id}>
               <Link
-                href={`/read/${p.id}`}
+                href={publicPassageHref(work, p)}
                 className="inline-block rounded-md border border-[var(--border)] bg-[var(--background)] px-2.5 py-1 text-xs font-medium text-[var(--foreground)] transition hover:bg-[var(--muted)]"
               >
                 {p.citation_ref}

@@ -1,3 +1,5 @@
+import { isPassageUuid } from "@/lib/public/routes";
+
 /** Maps MVP passage ids to work routes for sidebar highlighting. */
 export const PASSAGE_WORK_HREF: Record<string, string> = {
   "00000000-0000-0000-0002-000000000001": "/works/odyssey",
@@ -49,10 +51,22 @@ export function activeLibraryHref(pathname: string): string | null {
     return `/works/${workMatch[1]}`;
   }
 
-  for (const prefix of ["/passages/", "/read/", "/workspace/passages/"]) {
+  for (const prefix of ["/passages/", "/workspace/passages/"]) {
     const passageMatch = pathname.match(new RegExp(`^${prefix.replace(/\//g, "\\/")}([^/]+)`));
     if (passageMatch) {
       return PASSAGE_WORK_HREF[passageMatch[1]] ?? null;
+    }
+  }
+
+  const readSlugMatch = pathname.match(/^\/read\/[^/]+\/([^/]+)/);
+  if (readSlugMatch) {
+    return `/works/${readSlugMatch[1]}`;
+  }
+
+  if (isPassageUuid(pathname.replace(/^\/read\//, "").split("/")[0] ?? "")) {
+    const uuidMatch = pathname.match(/^\/read\/([^/]+)/);
+    if (uuidMatch) {
+      return PASSAGE_WORK_HREF[uuidMatch[1]] ?? null;
     }
   }
 

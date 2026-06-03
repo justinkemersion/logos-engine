@@ -58,7 +58,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-**Public (no login):** `/read` or `/read/00000000-0000-0000-0002-000000000001` (Odyssey 1.1).
+**Public (no login):** `/read` or `/read/homer/odyssey/1-1` (Odyssey 1.1).
 
 **Editorial (sign in):** `/works` and `/passages/<id>` for the full reading desk with AI draft workflow.
 
@@ -71,7 +71,9 @@ After setup, the following passages are available:
 | Path | Passage |
 |------|---------|
 | `/read` | Public library (anonymous) |
-| `/read/<passage-id>` | Public reader |
+| `/read/homer/odyssey/1-1` | Public reader (Odyssey 1.1) |
+| `/read/homer/iliad/1-1` | Public reader (Iliad 1.1) |
+| `/read/plato/republic/327a` | Public reader (Republic 327a) |
 | `/workspace` | Personal workspace |
 | `/works/odyssey` | Homer, Odyssey — passage list |
 | `/works/iliad` | Homer, Iliad — passage list |

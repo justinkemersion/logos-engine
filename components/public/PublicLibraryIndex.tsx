@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PublicWorkCard } from "./PublicWorkCard";
-import { ODYSSEY_1_1_PASSAGE_ID } from "@/lib/public/passages";
+import { ODYSSEY_1_1_HREF } from "@/lib/public/routes";
 import type { PassageRow, WorkRow } from "@/lib/types/entities";
 
 const AUTHOR_ORDER = ["Homer", "Plato"];
@@ -49,7 +49,7 @@ export function PublicLibraryIndex({
         Begin with the Greek. Move gently through literal meaning, readable translation, and the
         choices hidden between them.
       </p>
-      <Link href={`/read/${ODYSSEY_1_1_PASSAGE_ID}`} className={`mt-6 ${buttonSecondary}`}>
+      <Link href={ODYSSEY_1_1_HREF} className={`mt-6 ${buttonSecondary}`}>
         Explore Odyssey 1.1
       </Link>
 

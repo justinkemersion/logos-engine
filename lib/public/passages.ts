@@ -1,4 +1,6 @@
 import { fluxAnon } from "@/lib/flux/client";
+import { citationSlugMatchesRef } from "@/lib/public/citation-slug";
+import { authorToSlug } from "@/lib/public/routes";
 import type { PassageRow, SectionRow, WorkRow } from "@/lib/types/entities";
 import type {
   AuthenticityProfileRow,
@@ -40,6 +42,21 @@ export async function getPublicPassage(id: string): Promise<PassageRow | null> {
     `/passages?id=eq.${encodeURIComponent(id)}&limit=1`,
   );
   return rows[0] ?? null;
+}
+
+export async function resolvePublicPassageBySlug(
+  authorSlug: string,
+  workSlug: string,
+  citationSlug: string,
+): Promise<{ work: WorkRow; passage: PassageRow } | null> {
+  const work = await getPublicWork(workSlug);
+  if (!work || authorToSlug(work.author) !== authorSlug.trim().toLowerCase()) {
+    return null;
+  }
+  const passages = await listPublicPassagesByWork(work.id);
+  const passage = passages.find((p) => citationSlugMatchesRef(citationSlug, p.citation_ref));
+  if (!passage) return null;
+  return { work, passage };
 }
 
 export async function listPublicSectionsByWork(workId: string): Promise<SectionRow[]> {

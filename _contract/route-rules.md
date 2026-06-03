@@ -19,7 +19,8 @@
 | `/` | Landing page (public) |
 | `/login` | Sign-in |
 | `/read` | Public library |
-| `/read/[passageId]` | Public passage reader |
+| `/read/[authorSlug]/[workSlug]/[citationSlug]` | Public passage reader (human-readable) |
+| `/read/[passageId]` | Redirect legacy UUID public URLs to slug path |
 | `/workspace` | Personal workspace dashboard |
 | `/workspace/passages/[id]` | Workspace passage reader/editor |
 | `/works` | Work library |

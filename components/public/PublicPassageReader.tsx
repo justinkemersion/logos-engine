@@ -140,7 +140,7 @@ export function PublicPassageReader({
         />
       </div>
 
-      <PublicContinueReading workTitle={work.title} passage={passage} siblings={siblings} />
+      <PublicContinueReading work={work} passage={passage} siblings={siblings} />
     </div>
   );
 }

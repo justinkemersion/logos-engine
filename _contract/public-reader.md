@@ -5,7 +5,7 @@
 Anonymous visitors browse **accepted / reviewed** site canonical content only. No login, no
 editorial controls, no AI draft internals.
 
-Route: `/read`, `/read/[passageId]`.
+Route: `/read`, `/read/[authorSlug]/[workSlug]/[citationSlug]`. Legacy `/read/[passageId]` UUID URLs redirect to slug paths.
 
 ## Flux boundary (mandatory)
 

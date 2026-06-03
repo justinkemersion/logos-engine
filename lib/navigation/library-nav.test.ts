@@ -26,7 +26,14 @@ describe("library nav active state", () => {
     ).toBe(false);
   });
 
-  it("highlights Iliad from public read route", () => {
+  it("highlights Iliad from public read slug route", () => {
+    expect(activeLibraryHref("/read/homer/iliad/1-1")).toBe("/works/iliad");
+    expect(
+      isLibraryNavItemActive("/works/iliad", "/read/homer/iliad/1-1"),
+    ).toBe(true);
+  });
+
+  it("highlights Iliad from legacy public read UUID route", () => {
     expect(
       activeLibraryHref("/read/00000000-0000-0000-0002-000000000006"),
     ).toBe("/works/iliad");
