@@ -18,6 +18,9 @@ flux push sql/migrations/0013_public_read_anon.sql
 flux push sql/migrations/0013_public_read_grants.sql
 flux push sql/migrations/0014_workspaces_private_overlays.sql
 flux push sql/migrations/0014_workspaces_grants.sql
+flux push sql/migrations/0015_public_anon_lockdown.sql
+flux push sql/migrations/0016_public_reader_jwt_sub.sql
+flux push sql/migrations/0017_public_reader_jwt_sub_strict.sql
 ```
 
 After pushing all migrations:
@@ -47,6 +50,9 @@ pnpm public:probe       # verifies anon public-read policies
 | `0013_public_read_grants.sql` | `grant select` to `anon` on public-safe tables |
 | `0014_workspaces_private_overlays.sql` | `workspaces`, `workspace_*` overlay tables + parent-scoped RLS |
 | `0014_workspaces_grants.sql` | Authenticated CRUD on workspace tables (no anon) |
+| `0015_public_anon_lockdown.sql` | Revoke anon grants on machinery tables; RESTRICTIVE anon policies |
+| `0016_public_reader_jwt_sub.sql` | Block `public-reader` JWT sub from authenticated machinery policies |
+| `0017_public_reader_jwt_sub_strict.sql` | Require non-empty JWT sub for authenticated machinery SELECT |
 
 ## RLS model
 

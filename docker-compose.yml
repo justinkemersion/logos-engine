@@ -1,0 +1,39 @@
+# Load variables for build args + runtime: docker compose --env-file .env.docker up --build -d
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        AUTH_SECRET: ${AUTH_SECRET}
+        AUTH_GITHUB_ID: ${AUTH_GITHUB_ID}
+        AUTH_GITHUB_SECRET: ${AUTH_GITHUB_SECRET}
+        FLUX_URL: ${FLUX_URL}
+        FLUX_GATEWAY_JWT_SECRET: ${FLUX_GATEWAY_JWT_SECRET}
+    container_name: logos-engine-web
+    env_file:
+      - .env.docker
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.logos-engine-web.rule=Host(`logos.vsl-base.com`)"
+      - "traefik.http.routers.logos-engine-web.entrypoints=websecure"
+      - "traefik.http.routers.logos-engine-web.tls.certresolver=myresolver"
+      - "traefik.http.routers.logos-engine-web.priority=50"
+      - "traefik.http.services.logos-engine-web.loadbalancer.server.port=3000"
+    networks:
+      - flux-network
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/read').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+
+networks:
+  flux-network:
+    external: true

@@ -68,8 +68,22 @@ async function main() {
     "draft translation_layers blocked",
     `/translation_layers?passage_id=eq.${ODYSSEY_1_1_PASSAGE_ID}&status=eq.draft`,
   );
+  await expectEmpty(
+    "draft translation_variants blocked",
+    `/translation_variants?passage_id=eq.${ODYSSEY_1_1_PASSAGE_ID}&review_status=eq.draft&limit=1`,
+  );
+  await expectEmpty(
+    "draft commentary_notes blocked",
+    `/commentary_notes?passage_id=eq.${ODYSSEY_1_1_PASSAGE_ID}&review_status=eq.draft&limit=1`,
+  );
+  await expectEmpty(
+    "draft concept_mentions blocked",
+    `/concept_mentions?passage_id=eq.${ODYSSEY_1_1_PASSAGE_ID}&review_status=eq.draft&limit=1`,
+  );
   await expectEmpty("ai_runs blocked", "/ai_runs?limit=1");
   await expectEmpty("workspace_translation_layers blocked", "/workspace_translation_layers?limit=1");
+  await expectEmpty("workspace_translation_variants blocked", "/workspace_translation_variants?limit=1");
+  await expectEmpty("workspace_commentary_notes blocked", "/workspace_commentary_notes?limit=1");
 
   const failed = checks.filter((c) => !c.ok);
   for (const c of checks) {

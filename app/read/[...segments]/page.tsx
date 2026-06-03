@@ -1,6 +1,8 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { PublicReaderShell } from "@/components/public/PublicReaderShell";
 import { PublicPassageReader } from "@/components/public/PublicPassageReader";
+import { getSiteOrigin } from "@/lib/config/site";
 import { loadPublicPassagePage } from "@/lib/public/load-public-passage-page";
 import {
   getPublicPassage,
@@ -8,6 +10,21 @@ import {
   resolvePublicPassageBySlug,
 } from "@/lib/public/passages";
 import { isPassageUuid, publicPassageHref } from "@/lib/public/routes";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ segments: string[] }>;
+}): Promise<Metadata> {
+  const { segments } = await params;
+  if (segments.length !== 3) return {};
+  const [authorSlug, workSlug, citationSlug] = segments;
+  return {
+    alternates: {
+      canonical: `${getSiteOrigin()}/read/${authorSlug}/${workSlug}/${citationSlug}`,
+    },
+  };
+}
 
 async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   try {

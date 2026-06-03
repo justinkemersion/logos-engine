@@ -33,6 +33,9 @@ flux push sql/migrations/0013_public_read_anon.sql
 flux push sql/migrations/0013_public_read_grants.sql
 flux push sql/migrations/0014_workspaces_private_overlays.sql
 flux push sql/migrations/0014_workspaces_grants.sql
+flux push sql/migrations/0015_public_anon_lockdown.sql
+flux push sql/migrations/0016_public_reader_jwt_sub.sql
+flux push sql/migrations/0017_public_reader_jwt_sub_strict.sql
 
 # Sync schema name to .env.local
 pnpm flux:schema:sync
@@ -223,6 +226,28 @@ pnpm vitest run      # unit + flux boundary tests
 ```bash
 pnpm foundry:verify
 ```
+
+## Production deployment
+
+**Contract:** [`_contract/deployment.md`](../_contract/deployment.md)
+
+Git is the source of truth. The server at `/srv/apps/logos-engine` must be a **git clone**;
+never rsync the app tree for routine releases.
+
+**First bootstrap** (or replace a non-git tree):
+
+```bash
+./deploy/bootstrap-server.sh
+```
+
+**Routine deploy** (after `git push origin main`):
+
+```bash
+./deploy/relaunch.sh
+```
+
+Production secrets live in `.env.docker` on the server only (`deploy/env.docker.example` is the
+template). Run `pnpm public:probe` against production `FLUX_URL` after deploy.
 
 ## Environment variables
 

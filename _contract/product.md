@@ -17,7 +17,20 @@ students, and educated generalists who know that translations are interpretation
 |------|-------|----------|
 | Public Reader | `/read/**` | Anonymous; accepted/reviewed canonical content only |
 | Personal Workspace | `/workspace/**` | Logged-in; private overlays on shared passages |
-| Site Editorial | `/passages/[id]`, promotion/review | Maintains public canonical content |
+| Site Editorial | `/passages/[id]`, `/works/**`, promotion/review | Maintains public canonical content |
+
+## Production route policy
+
+At launch, three modes stay separated in routes, Flux helpers, RLS, and SEO:
+
+| Mode | Routes | Auth | Flux | Discoverability |
+|------|--------|------|------|-----------------|
+| Public reader | `/`, `/read/**` | Anonymous OK | `fluxAnon()` only | Indexable; canonical slug URLs |
+| Workspace | `/workspace/**` | Authenticated | `fluxJson(sub)` on `workspace_*` | `noindex` |
+| Editorial | `/passages/**`, `/works/**` | Authenticated editors | Full reads + promotion/review | `noindex` |
+
+Launch auth is GitHub-only. Production logs must never emit AI prompt payloads, JWT secrets,
+or workspace-private content. Deploy procedure: `_contract/deployment.md`.
 
 A user workspace is **not** a physical clone of the corpus. It is a private interpretive layer
 referencing shared `passage_id` rows.
