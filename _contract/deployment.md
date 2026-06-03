@@ -104,8 +104,9 @@ pnpm public:probe
 | `pnpm public:probe` (production `FLUX_URL`) | All checks pass |
 | Container health | `docker inspect logos-engine-web` → healthy |
 
-Portal registration (Vessel manifest) is a separate repo (`vessel-web`); deploy that via its
-own git workflow after Logos soak passes.
+Portal registration (Vessel manifest) is a separate repo (`vessel-web`); deploy that via
+[`vessel-web` `_contract/deployment.md`](https://github.com/justinkemersion/vessel-web/blob/main/_contract/deployment.md)
+after Logos soak passes.
 
 ## Logging policy
 
