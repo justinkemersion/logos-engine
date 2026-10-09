@@ -21,6 +21,7 @@ flux push sql/migrations/0014_workspaces_grants.sql
 flux push sql/migrations/0015_public_anon_lockdown.sql
 flux push sql/migrations/0016_public_reader_jwt_sub.sql
 flux push sql/migrations/0017_public_reader_jwt_sub_strict.sql
+flux push sql/migrations/0018_machinery_rls_reenable.sql
 ```
 
 After pushing all migrations:
@@ -53,12 +54,20 @@ pnpm public:probe       # verifies anon public-read policies
 | `0015_public_anon_lockdown.sql` | Revoke anon grants on machinery tables; RESTRICTIVE anon policies |
 | `0016_public_reader_jwt_sub.sql` | Block `public-reader` JWT sub from authenticated machinery policies |
 | `0017_public_reader_jwt_sub_strict.sql` | Require non-empty JWT sub for authenticated machinery SELECT |
+| `0018_machinery_rls_reenable.sql` | Re-enable FORCE RLS on `ai_runs`, `translation_layers`, `translation_variants`; subject from `request.jwt.claims` |
 
 ## RLS model
 
 Canonical content tables use `for select to authenticated using (true)` for editorial access.
 Public reader adds parallel `for select to anon` policies with restrictive `using` clauses
 (see `0013_public_read_anon.sql`). Workspace tables scope ownership via `workspaces.owner_sub`.
+
+The subject comes from `request.jwt.claims ->> 'sub'` (the same JSON GUC `0014` uses).
+Flux PostgREST v12.2.12 on v2_shared sets `request.jwt.claims` and does not set
+`request.jwt.claim.sub`, so `0016`/`0017`'s machinery SELECT policies are dead on
+v2_shared: that per-claim GUC is null and those checks never pass.
+`0018_machinery_rls_reenable.sql` reads the subject from `request.jwt.claims` and
+forces RLS back on for `ai_runs`, `translation_layers`, and `translation_variants`.
 
 Shared scholarly content has no `user_id` on canonical tables.
 
